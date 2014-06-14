@@ -1,34 +1,34 @@
-#include "cdatafieldint.h"
+#include "cdatafielduint.h"
 
-cDataFieldInt::cDataFieldInt()
+cDataFieldUInt::cDataFieldUInt()
     : caDataField()
 {
 }
 
-unsigned int* cDataFieldInt::getDataPtr(){
+unsigned int* cDataFieldUInt::getDataPtr(){
     return m_Data;
 }
 
-unsigned int cDataFieldInt::getValueAt(int index){
+unsigned int cDataFieldUInt::getValueAt(int index){
     if (index < m_NumEntries)
         return m_Data[index];
     else
         return 0;
 }
 
-void cDataFieldInt::setData(unsigned int *data, int numEntries){
+void cDataFieldUInt::setData(unsigned int *data, int numEntries){
     if (numEntries > 0)
         m_Data = data;
 }
 
-void cDataFieldInt::writeToOut(QTextStream &out){
+void cDataFieldUInt::writeToOut(QTextStream &out){
     if (m_NumEntries)
         for (int i=0; i < m_NumEntries; ++i){
             out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
         }
 }
 
-void cDataFieldInt::writeValueToOut(QTextStream &out, int index){
+void cDataFieldUInt::writeValueToOut(QTextStream &out, int index){
     if (index < m_NumEntries)
         out << m_DataName << " " << index << ": " << m_Data[index] << "\n";
 }

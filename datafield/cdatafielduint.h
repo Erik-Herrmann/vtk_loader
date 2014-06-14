@@ -1,6 +1,7 @@
 #ifndef CDATAFIELDINT_H
 #define CDATAFIELDINT_H
 
+#include "cadatafield.h"
 #include <QTextStream>
 
 class cDataFieldUInt : public caDataField

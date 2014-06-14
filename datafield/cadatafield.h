@@ -2,6 +2,7 @@
 #define CADATAFIELD_H
 
 #include <QString>
+#include <QTextStream>
 
 class caDataField
 {
