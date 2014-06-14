@@ -17,7 +17,7 @@ public:
     virtual void writeToOut(QTextStream &out) = 0;
     virtual void writeValueToOut(QTextStream &out, int index) = 0;
 
-private:
+protected:
     QString m_DataName;
     int m_NumEntries;
 };

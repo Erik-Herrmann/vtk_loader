@@ -19,7 +19,10 @@ SOURCES += main.cpp\
     vtk_filter.cpp \
     datafield/cdatafieldint.cpp \
     datafield/cadatafield.cpp \
-    datafield/cdatafielduint.cpp
+    datafield/cdatafielduint.cpp \
+    datafield/cdatafieldfloat.cpp \
+    datafield/cdatafielddouble.cpp \
+    datafield/cdatafielduchar.cpp
 
 HEADERS  += mainwindow.h \
     vtk_loader.h \
@@ -29,7 +32,10 @@ HEADERS  += mainwindow.h \
     datafield/cdatafieldint.h \
     datafield/cadatafield.h \
     datafield/cdatafielduint.h \
-    datafield/datafieldincludes.h
+    datafield/datafieldincludes.h \
+    datafield/cdatafieldfloat.h \
+    datafield/cdatafielddouble.h \
+    datafield/cdatafielduchar.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui

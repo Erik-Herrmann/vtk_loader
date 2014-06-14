@@ -22,7 +22,7 @@ void cDataFieldInt::setData(int *data, int numEntries){
 }
 
 void cDataFieldInt::writeToOut(QTextStream &out){
-    if (m_NumEntries)
+    if (m_NumEntries){
         if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
             int pos = 0;
             while(pos < m_NumEntries){
@@ -39,6 +39,7 @@ void cDataFieldInt::writeToOut(QTextStream &out){
                 out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
             }
         }
+    }
 }
 
 void cDataFieldInt::writeValueToOut(QTextStream &out, int index){
