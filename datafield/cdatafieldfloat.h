@@ -1,14 +1,14 @@
-#ifndef CDATAFIELDINT_H
-#define CDATAFIELDINT_H
+#ifndef CDATAFIELDFLOAT_H
+#define CDATAFIELDFLOAT_H
 
 #include "cadatafield.h"
 #include <QTextStream>
 
-class cDataFieldfloat : public caDataField
+class cDataFieldFloat : public caDataField
 {
 public:
-    cDataFieldfloat();
-    ~cDataFieldfloat();
+    cDataFieldFloat();
+    ~cDataFieldFloat();
 
     float* getDataPtr();
     float getValueAt(int index);
@@ -21,4 +21,4 @@ private:
     float *m_Data;
 };
 
-#endif // CDATAFIELDINT_H
+#endif // CDATAFIELDFLOAT_H

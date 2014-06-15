@@ -10,6 +10,10 @@ caDataField::caDataField(QString name)
 {
 }
 
+void caDataField::setName(QString name){
+    m_DataName = name;
+}
+
 QString caDataField::getName(){
     return m_DataName;
 }

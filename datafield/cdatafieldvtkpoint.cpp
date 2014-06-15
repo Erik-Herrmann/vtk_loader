@@ -21,8 +21,10 @@ vtkPoint cDataFieldVtkPoint::getValueAt(int index){
 }
 
 void cDataFieldVtkPoint::setData(vtkPoint *data, int numEntries){
-    if (numEntries > 0)
+    if (numEntries > 0){
         m_Data = data;
+        m_NumEntries = numEntries;
+    }
 }
 
 void cDataFieldVtkPoint::writeToOut(QTextStream &out){

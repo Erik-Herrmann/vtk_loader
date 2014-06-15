@@ -7,5 +7,6 @@
 #include "cdatafieldfloat.h"
 #include "cdatafielddouble.h"
 #include "cdatafielduchar.h"
+#include "cdatafieldvtkpoint.h"
 
 #endif // DATAFIELDINCLUDES_H

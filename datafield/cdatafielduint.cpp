@@ -21,8 +21,10 @@ unsigned int cDataFieldUInt::getValueAt(int index){
 }
 
 void cDataFieldUInt::setData(unsigned int *data, int numEntries){
-    if (numEntries > 0)
+    if (numEntries > 0){
         m_Data = data;
+        m_NumEntries = numEntries;
+    }
 }
 
 void cDataFieldUInt::writeToOut(QTextStream &out){

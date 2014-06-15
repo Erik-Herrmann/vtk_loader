@@ -2,6 +2,7 @@
 #include <QTextStream>
 #include <QStringList>
 #include <typeinfo>
+#include "datafield/datafieldincludes.h"
 
 
 vtk_loader::vtk_loader(QObject *parent) :
@@ -65,12 +66,13 @@ void vtk_loader::loadData(QString filename){
         else {
             if (strings.at(0) == "POINTS"){
                 int values = strings.at(1).toInt();
-                DataField<vtkPoint> *datafield = new DataField<vtkPoint>;
-                datafield->dataname = "POINTS";
-                datafield->numEntries = values;
-                datafield->typeId = VTKPOINT_T;
-                datafield->typeSize = datafield->getTypeSizeFromId(datafield->typeId);
-                datafield->data = (vtkPoint*)malloc(values*sizeof(vtkPoint));
+//                DataField<vtkPoint> *datafield = new DataField<vtkPoint>;
+//                datafield->dataname = "POINTS";
+//                datafield->numEntries = values;
+//                datafield->typeId = VTKPOINT_T;
+//                datafield->typeSize = datafield->getTypeSizeFromId(datafield->typeId);
+//                datafield->data = (vtkPoint*)malloc(values*sizeof(vtkPoint));
+                vtkPoint* data = (vtkPoint*)malloc(values*sizeof(vtkPoint));
                 int progressUpdate = values/100;
                 emit resetProgress();
                 emit setProgress(QString("Loading Points (%1) ...").arg(values));
@@ -82,11 +84,15 @@ void vtk_loader::loadData(QString filename){
                     myPoint.x = reverse(myPoint.x);
                     myPoint.y = reverse(myPoint.y);
                     myPoint.z = reverse(myPoint.z);
-                    datafield->data[i] = myPoint;
+                    /*datafield->*/data[i] = myPoint;
                     if (!(i%progressUpdate))
                         emit addProgress(1);
                 }
-                filedata->dataFields.push_back((DataField<void>*)datafield);
+                cDataFieldVtkPoint *df = new cDataFieldVtkPoint;
+                df->setName(strings.at(0));
+                df->setData(data, values);
+                filedata->dataFields.push_back(df);
+                //filedata->dataFields.push_back((DataField<void>*)datafield);
                 filedata->numDataFields++;
             }
             else if ((strings.at(0) == "POLYGONS") || (strings.at(0) == "LINES")){
@@ -112,13 +118,14 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
 {
     QString fieldName = line->left(line->indexOf(' '));
 
-    DataField<T> *datafield = new DataField<T>;
-    datafield->dataname = fieldName;
-    datafield->numEntries = numVal;
-    datafield->data = (T*)malloc(numVal*sizeof(T));
-    datafield->typeId = checkType<T>();
-    datafield->typeSize = sizeof(T);
+//    DataField<T> *datafield = new DataField<T>;
+//    datafield->dataname = fieldName;
+//    datafield->numEntries = numVal;
+//    datafield->data = (T*)malloc(numVal*sizeof(T));
+//    datafield->typeId = checkType<T>();
+//    datafield->typeSize = sizeof(T);
 
+    T* data = (T*)malloc(numVal*sizeof(T));
     if (lines > 1){
         emit setProgress(QString("Loading %1 (%2) ...")
                          .arg(fieldName).arg(lines));
@@ -129,11 +136,11 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         for (int i=0; i < lines; ++i){
             inFile->read((char*)&value0, sizeof(T));
             value0 = reverse<T>(value0);
-            datafield->data[k++] = value0;
+            /*datafield->*/data[k++] = value0;
             for (int j=0; j < value0; ++j){
                 inFile->read((char*)&value1, sizeof(T));
                 value1 = reverse<T>(value1);
-                datafield->data[k++] = value1;
+                /*datafield->*/data[k++] = value1;
             }
             if (!(i%progressUpdate))
                 emit addProgress(2);
@@ -148,14 +155,73 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         for (int i=0; i < numVal; ++i){
             inFile->read((char*)&value, sizeof(T));
             value = reverse<T>(value);
-            datafield->data[i] = value;
+            /*datafield->*/data[i] = value;
             if (!(i%progressUpdate))
                 emit addProgress(1);
         }
     }
 
-    filedata->dataFields.push_back((DataField<void>*)datafield);
-    filedata->numDataFields++;
+    switch (checkType<T>()) {
+    case INT_T:
+        {
+            cDataFieldInt* df = new cDataFieldInt;
+            df->setName(fieldName);
+            df->setData(data, numVal);
+            filedata->dataFields.push_back(df);
+            filedata->numDataFields++;
+        }
+        break;
+    case UINT_T:
+        {
+            cDataFieldUInt* df = new cDataFieldUInt;
+            df->setName(fieldName);
+            df->setData(data, numVal);
+            filedata->dataFields.push_back(df);
+            filedata->numDataFields++;
+        }
+        break;
+    case FLOAT_T:
+    {
+        cDataFieldFloat* df = new cDataFieldFloat;
+        df->setName(fieldName);
+        df->setData(data, numVal);
+        filedata->dataFields.push_back(df);
+        filedata->numDataFields++;
+    }
+        break;
+    case DOUBLE_T:
+    {
+        cDataFieldDouble* df = new cDataFieldDouble;
+        df->setName(fieldName);
+        df->setData(data, numVal);
+        filedata->dataFields.push_back(df);
+        filedata->numDataFields++;
+    }
+        break;
+    case UCHAR_T:
+    {
+        cDataFieldUChar* df = new cDataFieldUChar;
+        df->setName(fieldName);
+        df->setData(data, numVal);
+        filedata->dataFields.push_back(df);
+        filedata->numDataFields++;
+    }
+        break;
+    case VTKPOINT_T:
+    {
+        cDataFieldVtkPoint* df = new cDataFieldVtkPoint;
+        df->setName(fieldName);
+        df->setData(data, numVal);
+        filedata->dataFields.push_back(df);
+        filedata->numDataFields++;
+    }
+        break;
+    default:
+        break;
+    }
+
+//    filedata->dataFields.push_back((DataField<void>*)datafield);
+//    filedata->numDataFields++;
 }
 
 
@@ -200,7 +266,7 @@ void vtk_loader::saveAsFile(){
         saveAsFile(outfilename);
     }
 }
-
+/*
 void vtk_loader::saveAsFile(QString filename){
     if (!filedata)
         return;
@@ -307,6 +373,42 @@ void vtk_loader::saveAsFile(QString filename){
     }
     outFile->close();
     delete outFile;
+
+    emit setProgress(" >> DONE! <<");
+
+    // enable Widget Controls
+    emit enableWidgetControls(true);
+}
+*/
+
+void vtk_loader::saveAsFile(QString filename){
+    if (!filedata)
+        return;
+
+    // disable Widget Controls
+    emit enableWidgetControls(false);
+
+    QFile *outFile = new QFile(filename);
+    if (!outFile->open(QIODevice::WriteOnly))
+        return;
+
+    QTextStream out(outFile);
+    int progUpPerField = 100/filedata->dataFields.size();
+    emit setProgress("Saving to File ...");
+    emit resetProgress();
+
+
+    for (QList<caDataField*>::Iterator it = filedata->dataFields.begin();
+         it != filedata->dataFields.end(); ++it)
+    {
+        //int progressUpdate = (*it)->numEntries/progUpPerField;
+        //out << (*it)->getName() << " " << (*it)->numEntries << "\n";
+        (*it)->writeToOut(out);
+        emit addProgress(progUpPerField);
+    }
+    outFile->close();
+    delete outFile;
+
     emit setProgress(" >> DONE! <<");
 
     // enable Widget Controls

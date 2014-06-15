@@ -1,5 +1,5 @@
-#ifndef CDATAFIELDINT_H
-#define CDATAFIELDINT_H
+#ifndef CDATAFIELDUINT_H
+#define CDATAFIELDUINT_H
 
 #include "cadatafield.h"
 #include <QTextStream>
@@ -21,4 +21,4 @@ private:
     unsigned int *m_Data;
 };
 
-#endif // CDATAFIELDINT_H
+#endif // CDATAFIELDUINT_H

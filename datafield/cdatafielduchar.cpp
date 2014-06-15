@@ -21,8 +21,10 @@ unsigned char cDataFieldUChar::getValueAt(int index){
 }
 
 void cDataFieldUChar::setData(unsigned char *data, int numEntries){
-    if (numEntries > 0)
+    if (numEntries > 0){
         m_Data = data;
+        m_NumEntries = numEntries;
+    }
 }
 
 void cDataFieldUChar::writeToOut(QTextStream &out){

@@ -21,8 +21,10 @@ double cDataFieldDouble::getValueAt(int index){
 }
 
 void cDataFieldDouble::setData(double *data, int numEntries){
-    if (numEntries > 0)
+    if (numEntries > 0){
         m_Data = data;
+        m_NumEntries = numEntries;
+    }
 }
 
 void cDataFieldDouble::writeToOut(QTextStream &out){

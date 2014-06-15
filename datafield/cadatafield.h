@@ -11,6 +11,8 @@ public:
     explicit caDataField();
     explicit caDataField(QString name);
 
+    void setName(QString name);
+
     QString getName();
     int numEntries();
 

@@ -1,5 +1,5 @@
-#ifndef CDATAFIELDINT_H
-#define CDATAFIELDINT_H
+#ifndef CDATAFIELDDOUBLE_H
+#define CDATAFIELDDOUBLE_H
 
 #include "cadatafield.h"
 #include <QTextStream>
@@ -21,4 +21,4 @@ private:
     double *m_Data;
 };
 
-#endif // CDATAFIELDINT_H
+#endif // CDATAFIELDDOUBLE_H

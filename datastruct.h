@@ -4,6 +4,7 @@
 #include <QString>
 #include <QList>
 #include "vtkpoint.h"
+#include "datafield/datafieldincludes.h"
 
 enum MyTypes{
     NOTYPE = -1,
@@ -15,7 +16,7 @@ enum MyTypes{
     VTKPOINT_T = 5
 
 };
-
+/*
 template<typename T>
 struct DataField{
     DataField(){
@@ -51,7 +52,7 @@ struct DataField{
     int typeSize;
     T *data;
 };
-
+*/
 
 struct FileData{
     FileData(){
@@ -59,29 +60,30 @@ struct FileData{
         numDataFields = 0;
     }
 
-    ~FileData(){
-        for (QList<DataField<void>*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
-             delete *it;
-        }
-    }
+//    ~FileData(){
+//        for (QList<DataField<void>*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
+//             delete *it;
+//        }
+//    }
 
-    DataField<void>* getDatafield(int i){
-        return dataFields.at(i);
-    }
+//    DataField<void>* getDatafield(int i){
+//        return dataFields.at(i);
+//    }
 
-    DataField<void>* getDatafield(QString fieldname){
-        for (QList<DataField<void>*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
-            if ((*it)->dataname == fieldname){
-                return *it;
-            }
-        }
+//    DataField<void>* getDatafield(QString fieldname){
+//        for (QList<DataField<void>*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
+//            if ((*it)->dataname == fieldname){
+//                return *it;
+//            }
+//        }
 
-        return 0;
-    }
+//        return 0;
+//    }
 
     QString filename;
     int numDataFields;
-    QList<DataField<void>*> dataFields;
+//    QList<DataField<void>*> dataFields;
+    QList<caDataField*> dataFields;
 };
 
 #endif // DATASTRUCT_H

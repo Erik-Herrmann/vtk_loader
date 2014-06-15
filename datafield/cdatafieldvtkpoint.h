@@ -1,5 +1,5 @@
-#ifndef CDATAFIELDINT_H
-#define CDATAFIELDINT_H
+#ifndef CDATAFIELDVTKPOINT_H
+#define CDATAFIELDVTKPOINT_H
 
 #include "cadatafield.h"
 #include "vtkpoint.h"
@@ -23,4 +23,4 @@ private:
     vtkPoint *m_Data;
 };
 
-#endif // CDATAFIELDINT_H
+#endif // CDATAFIELDVTKPOINT_H
