@@ -8,6 +8,8 @@ class cDataFieldInt : public caDataField
 {
 public:
     cDataFieldInt();
+    ~cDataFieldInt();
+
     int* getDataPtr();
     int getValueAt(int index);
     void writeToOut(QTextStream &out);

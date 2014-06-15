@@ -8,6 +8,8 @@ class cDataFieldDouble : public caDataField
 {
 public:
     cDataFieldDouble();
+    ~cDataFieldDouble();
+
     double* getDataPtr();
     double getValueAt(int index);
     void writeToOut(QTextStream &out);

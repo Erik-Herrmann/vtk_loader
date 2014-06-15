@@ -5,6 +5,10 @@ cDataFieldUInt::cDataFieldUInt()
 {
 }
 
+cDataFieldUInt::~cDataFieldUInt(){
+    free(m_Data);
+}
+
 unsigned int* cDataFieldUInt::getDataPtr(){
     return m_Data;
 }

@@ -8,6 +8,8 @@ class cDataFieldUChar : public caDataField
 {
 public:
     cDataFieldUChar();
+    ~cDataFieldUChar();
+
     unsigned char* getDataPtr();
     unsigned char getValueAt(int index);
     void writeToOut(QTextStream &out);

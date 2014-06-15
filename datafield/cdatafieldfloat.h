@@ -8,6 +8,8 @@ class cDataFieldfloat : public caDataField
 {
 public:
     cDataFieldfloat();
+    ~cDataFieldfloat();
+
     float* getDataPtr();
     float getValueAt(int index);
     void writeToOut(QTextStream &out);

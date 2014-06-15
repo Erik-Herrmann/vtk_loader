@@ -5,6 +5,10 @@ cDataFieldUChar::cDataFieldUChar()
 {
 }
 
+cDataFieldUChar::~cDataFieldUChar(){
+    free(m_Data);
+}
+
 unsigned char* cDataFieldUChar::getDataPtr(){
     return m_Data;
 }

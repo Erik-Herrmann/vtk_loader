@@ -5,6 +5,10 @@ cDataFieldInt::cDataFieldInt()
 {
 }
 
+cDataFieldInt::~cDataFieldInt(){
+    free(m_Data);
+}
+
 int* cDataFieldInt::getDataPtr(){
     return m_Data;
 }

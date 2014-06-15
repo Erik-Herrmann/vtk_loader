@@ -5,6 +5,10 @@ cDataFieldfloat::cDataFieldfloat()
 {
 }
 
+cDataFieldfloat::~cDataFieldfloat(){
+    free(m_Data);
+}
+
 float* cDataFieldfloat::getDataPtr(){
     return m_Data;
 }

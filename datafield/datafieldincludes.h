@@ -5,5 +5,7 @@
 #include "cdatafieldint.h"
 #include "cdatafielduint.h"
 #include "cdatafieldfloat.h"
+#include "cdatafielddouble.h"
+#include "cdatafielduchar.h"
 
 #endif // DATAFIELDINCLUDES_H

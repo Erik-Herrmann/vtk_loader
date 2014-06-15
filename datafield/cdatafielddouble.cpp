@@ -5,6 +5,10 @@ cDataFieldDouble::cDataFieldDouble()
 {
 }
 
+cDataFieldDouble::~cDataFieldDouble(){
+    free(m_Data);
+}
+
 double* cDataFieldDouble::getDataPtr(){
     return m_Data;
 }
