@@ -201,26 +201,6 @@ void vtk_loader::saveAsFile(){
     }
 }
 
-
-//template<typename T>
-//void writeToOut(void *df_v, int pos, int numArg, va_list vl){
-//    if (numArg != 1)
-//        return;
-//    DataField<T>* df = (DataField<T>*)df_v;
-//    QTextStream &out = *va_arg(vl, QTextStream*);
-//    if (df->dataname == "POINTS"){
-//        out << df->dataname << " " << pos << ": " << df->data[pos].x << " " << df->data[pos].y << " " << df->data[pos].z << "\n";
-//    }
-//    else if ((df->dataname == "LINES") || (df->dataname == "POLYGONS")){
-//        //out << df->dataname << " " << j << ": " << df->data[j] << "\n";
-//    }
-//    else {
-//        out << df->dataname << " " << pos << ": " << df->data[pos] << "\n";
-//    }
-
-//    va_end(vl);
-//}
-
 void vtk_loader::saveAsFile(QString filename){
     if (!filedata)
         return;

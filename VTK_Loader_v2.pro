@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     datafield/cdatafielduint.cpp \
     datafield/cdatafieldfloat.cpp \
     datafield/cdatafielddouble.cpp \
-    datafield/cdatafielduchar.cpp
+    datafield/cdatafielduchar.cpp \
+    datafield/cdatafieldvtkpoint.cpp
 
 HEADERS  += mainwindow.h \
     vtk_loader.h \
@@ -35,7 +36,9 @@ HEADERS  += mainwindow.h \
     datafield/datafieldincludes.h \
     datafield/cdatafieldfloat.h \
     datafield/cdatafielddouble.h \
-    datafield/cdatafielduchar.h
+    datafield/cdatafielduchar.h \
+    vtkpoint.h \
+    datafield/cdatafieldvtkpoint.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui

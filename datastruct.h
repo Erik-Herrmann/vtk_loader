@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QList>
-#include <boost/variant.hpp>
+#include "vtkpoint.h"
 
 enum MyTypes{
     NOTYPE = -1,
@@ -14,24 +14,6 @@ enum MyTypes{
     UCHAR_T = 4,
     VTKPOINT_T = 5
 
-};
-
-//typedef boost::variant<DataField<int>*,
-//                       DataField<unsigned int>*,
-//                       DataField<float>*,
-//                       DataField<double>*,
-//                       DataField<unsigned char>*,
-//                       DataField<vtkPoint>*
-//        > VariantType;
-
-struct vtkPoint{
-    vtkPoint(){
-        x = 0.0;
-        y = 0.0;
-        z = 0.0;
-    }
-
-    float x, y, z;
 };
 
 template<typename T>
@@ -96,66 +78,6 @@ struct FileData{
 
         return 0;
     }
-/*
-    void applyFuncToDataField(DataField<void>* df_v,  void(*func)(void*, int, int, va_list), int numArg, ...){
-       va_list vl, vl_this;
-       va_start(vl_this, numArg);
-       va_copy(vl, vl_this);
-        switch (df_v->typeId){
-        case INT_T:
-            if (df_v->data){
-                DataField<int>* df = (DataField<int>*)df_v;
-                for (int i=0; i < df->numEntries; ++i){
-                        func<int>(df_v, i, numArg, vl);
-                }
-            }
-            break;
-        case UINT_T:
-            if (df_v->data){
-                DataField<unsigned int>* df = (DataField<unsigned int>*)df_v;
-                for (int i=0; i < df->numEntries; ++i){
-                    func<unsigned int>(df_v, i, numArg, vl);
-                }
-            }
-            break;
-        case FLOAT_T:
-            if (df_v->data){
-                DataField<float>* df = (DataField<float>*)df_v;
-                for (int i=0; i < df->numEntries; ++i){
-                    func<float>(df_v, i, numArg, vl);
-                }
-            }
-            break;
-        case DOUBLE_T:
-            if (df_v->data){
-                DataField<double>* df = (DataField<double>*)df_v;
-                for (int i=0; i < df->numEntries; ++i){
-                    func<double>(df_v, i, numArg, vl);
-                }
-            }
-            break;
-        case UCHAR_T:
-            if (df_v->data){
-                DataField<unsigned char>* df = (DataField<unsigned char>*)df_v;
-                for (int i=0; i < df->numEntries; ++i){
-                    func<unsigned char>(df_v, i, numArg, vl);
-                }
-            }
-            break;
-        case VTKPOINT_T:
-            if (df_v->data){
-                DataField<vtkPoint>* df = (DataField<vtkPoint>*)df_v;
-                for (int i=0; i < df->numEntries; ++i){
-                    func<vtkPoint>(df_v, i, numArg, vl);
-                }
-            }
-            break;
-        default:
-            break;
-        }
-        va_end(vl_this);
-    }
-    */
 
     QString filename;
     int numDataFields;
