@@ -10,7 +10,7 @@ class caDataField
 public:
     explicit caDataField();
     explicit caDataField(QString name);
-
+    virtual ~caDataField();
     void setName(QString name);
 
     QString getName();

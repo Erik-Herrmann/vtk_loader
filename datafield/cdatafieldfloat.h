@@ -8,7 +8,7 @@ class cDataFieldFloat : public caDataField
 {
 public:
     cDataFieldFloat();
-    ~cDataFieldFloat();
+    virtual ~cDataFieldFloat();
 
     float* getDataPtr();
     float getValueAt(int index);

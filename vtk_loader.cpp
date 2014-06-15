@@ -166,7 +166,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         {
             cDataFieldInt* df = new cDataFieldInt;
             df->setName(fieldName);
-            df->setData(data, numVal);
+            df->setData((int*)data, numVal);
             filedata->dataFields.push_back(df);
             filedata->numDataFields++;
         }
@@ -175,7 +175,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         {
             cDataFieldUInt* df = new cDataFieldUInt;
             df->setName(fieldName);
-            df->setData(data, numVal);
+            df->setData((unsigned int*)data, numVal);
             filedata->dataFields.push_back(df);
             filedata->numDataFields++;
         }
@@ -184,7 +184,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
     {
         cDataFieldFloat* df = new cDataFieldFloat;
         df->setName(fieldName);
-        df->setData(data, numVal);
+        df->setData((float*)data, numVal);
         filedata->dataFields.push_back(df);
         filedata->numDataFields++;
     }
@@ -193,7 +193,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
     {
         cDataFieldDouble* df = new cDataFieldDouble;
         df->setName(fieldName);
-        df->setData(data, numVal);
+        df->setData((double*)data, numVal);
         filedata->dataFields.push_back(df);
         filedata->numDataFields++;
     }
@@ -202,7 +202,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
     {
         cDataFieldUChar* df = new cDataFieldUChar;
         df->setName(fieldName);
-        df->setData(data, numVal);
+        df->setData((unsigned char*)data, numVal);
         filedata->dataFields.push_back(df);
         filedata->numDataFields++;
     }
@@ -211,7 +211,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
     {
         cDataFieldVtkPoint* df = new cDataFieldVtkPoint;
         df->setName(fieldName);
-        df->setData(data, numVal);
+        df->setData((vtkPoint*)data, numVal);
         filedata->dataFields.push_back(df);
         filedata->numDataFields++;
     }

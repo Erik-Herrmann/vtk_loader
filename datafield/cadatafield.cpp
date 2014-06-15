@@ -10,6 +10,10 @@ caDataField::caDataField(QString name)
 {
 }
 
+caDataField::~caDataField(){
+
+}
+
 void caDataField::setName(QString name){
     m_DataName = name;
 }

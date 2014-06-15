@@ -10,7 +10,7 @@ class cDataFieldVtkPoint : public caDataField
 {
 public:
     cDataFieldVtkPoint();
-    ~cDataFieldVtkPoint();
+    virtual ~cDataFieldVtkPoint();
 
     vtkPoint* getDataPtr();
     vtkPoint getValueAt(int index);

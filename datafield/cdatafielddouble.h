@@ -8,7 +8,7 @@ class cDataFieldDouble : public caDataField
 {
 public:
     cDataFieldDouble();
-    ~cDataFieldDouble();
+    virtual ~cDataFieldDouble();
 
     double* getDataPtr();
     double getValueAt(int index);

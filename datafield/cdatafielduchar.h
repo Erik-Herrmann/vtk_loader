@@ -8,7 +8,7 @@ class cDataFieldUChar : public caDataField
 {
 public:
     cDataFieldUChar();
-    ~cDataFieldUChar();
+    virtual ~cDataFieldUChar();
 
     unsigned char* getDataPtr();
     unsigned char getValueAt(int index);

@@ -60,29 +60,28 @@ struct FileData{
         numDataFields = 0;
     }
 
-//    ~FileData(){
-//        for (QList<DataField<void>*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
-//             delete *it;
-//        }
-//    }
+    ~FileData(){
+        for (QList<caDataField*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
+             delete *it;
+        }
+    }
 
-//    DataField<void>* getDatafield(int i){
-//        return dataFields.at(i);
-//    }
+    caDataField* getDatafield(int i){
+        return dataFields.at(i);
+    }
 
-//    DataField<void>* getDatafield(QString fieldname){
-//        for (QList<DataField<void>*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
-//            if ((*it)->dataname == fieldname){
-//                return *it;
-//            }
-//        }
+    caDataField* getDatafield(QString fieldname){
+        for (QList<caDataField*>::Iterator it = dataFields.begin();it != dataFields.end(); ++it){
+            if ((*it)->getName() == fieldname){
+                return *it;
+            }
+        }
 
-//        return 0;
-//    }
+        return 0;
+    }
 
     QString filename;
     int numDataFields;
-//    QList<DataField<void>*> dataFields;
     QList<caDataField*> dataFields;
 };
 

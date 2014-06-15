@@ -8,7 +8,7 @@ class cDataFieldInt : public caDataField
 {
 public:
     cDataFieldInt();
-    ~cDataFieldInt();
+    virtual ~cDataFieldInt();
 
     int* getDataPtr();
     int getValueAt(int index);
