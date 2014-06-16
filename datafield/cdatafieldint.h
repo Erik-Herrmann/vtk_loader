@@ -2,6 +2,7 @@
 #define CDATAFIELDINT_H
 
 #include "cadatafield.h"
+#include "helpers.h"
 #include <QTextStream>
 
 class cDataFieldInt : public caDataField
@@ -16,6 +17,8 @@ public:
     void writeValueToOut(QTextStream &out, int index);
 
     void setData(int *data, int numEntries);
+
+    QList<int> filterData(int opId, QString valStr);
 
 private:
     int *m_Data;

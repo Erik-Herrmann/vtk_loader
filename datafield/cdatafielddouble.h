@@ -17,6 +17,8 @@ public:
 
     void setData(double *data, int numEntries);
 
+    QList<int> filterData(int opId, QString valStr);
+
 private:
     double *m_Data;
 };

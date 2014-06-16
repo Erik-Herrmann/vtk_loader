@@ -19,6 +19,8 @@ public:
 
     void setData(vtkPoint *data, int numEntries);
 
+    QList<int> filterData(int opId, QString valStr);
+
 private:
     vtkPoint *m_Data;
 };

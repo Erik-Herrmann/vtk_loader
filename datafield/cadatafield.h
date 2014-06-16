@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QTextStream>
+#include <QList>
 
 class caDataField
 {
@@ -18,6 +19,8 @@ public:
 
     virtual void writeToOut(QTextStream &out) = 0;
     virtual void writeValueToOut(QTextStream &out, int index) = 0;
+
+    virtual QList<int> filterData(int opId, QString valStr) = 0 ;
 
 protected:
     QString m_DataName;

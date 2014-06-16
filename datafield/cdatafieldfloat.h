@@ -17,6 +17,8 @@ public:
 
     void setData(float *data, int numEntries);
 
+    QList<int> filterData(int opId, QString valStr);
+
 private:
     float *m_Data;
 };
