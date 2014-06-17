@@ -29,6 +29,8 @@ private:
     template<typename T>
     MyTypes checkType();
 
+    void detectFiletype();
+
 signals:
     //>> Signals to control the Widget
     // set Name of File

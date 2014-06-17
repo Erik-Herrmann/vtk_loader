@@ -1,5 +1,9 @@
 #include "helpers.h"
 
+#define SEC_PER_MIN 60
+#define SEC_PER_HOUR 3600
+#define SEC_PER_DAY 86400
+
 namespace Helpers{
 
 bool equal_to(int &a, int &b){
@@ -196,6 +200,20 @@ bool less_equal(vtkPoint &a, vtkPoint &b){
     return (a.x <= b.x) &&
             (a.y <= b.y) &&
             (a.z <= b.z);
+}
+
+
+QDateTime juliantimeToDatetime(double secSince){
+    qint64 sec = secSince;
+
+    QDateTime dateTime(QDate(2000, 1, 1));
+    qint64 days = sec/SEC_PER_DAY;
+    dateTime = dateTime.addDays(days);
+    sec %= SEC_PER_DAY;
+
+    dateTime = dateTime.addSecs(sec);
+
+    return dateTime;
 }
 
 }

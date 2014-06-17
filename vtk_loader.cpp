@@ -18,6 +18,20 @@ FileData* vtk_loader::getFileData(){
     return filedata;
 }
 
+void vtk_loader::detectFiletype(){
+    if(filedata)
+        if (filedata->filename != "NOFILE"){
+            if (filedata->filename.contains("mipas", Qt::CaseInsensitive))
+                filedata->fileType = MIPAS;
+            if (filedata->filename.contains("airs", Qt::CaseInsensitive))
+                filedata->fileType = AIRS;
+            if (filedata->filename.contains("clams", Qt::CaseInsensitive))
+                filedata->fileType = CLAMS;
+            if (filedata->filename.contains("tropo", Qt::CaseInsensitive))
+                filedata->fileType = TROPO;
+        }
+}
+
 void vtk_loader::loadData(QString filename){
     // disable Widget Controls
     emit enableWidgetControls(false);
@@ -30,6 +44,8 @@ void vtk_loader::loadData(QString filename){
     inFile->setFileName(filename);
     filedata->filename = filename;
     emit setProgressingFilename(filename.right(filename.length()-filename.lastIndexOf('/')-1));
+
+    detectFiletype();
 
     // open File
     inFile->open(QIODevice::ReadOnly);

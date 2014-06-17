@@ -2,6 +2,7 @@
 #define HELPERS_H
 
 #include "vtkpoint.h"
+#include "QDateTime"
 
 namespace Helpers {
 bool equal_to(int &a, int &b);
@@ -51,6 +52,9 @@ bool less_equal(double &a, double &b);
 bool less_equal(unsigned char &a, unsigned char &b);
 bool less_equal(vtkPoint &a, float &b);
 bool less_equal(vtkPoint &a, vtkPoint &b);
+
+QDateTime juliantimeToDatetime(double secSince);
+
 }
 
 #endif // HELPERS_H

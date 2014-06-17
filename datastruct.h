@@ -16,6 +16,15 @@ enum MyTypes{
     VTKPOINT_T = 5
 
 };
+
+enum FileTypes{
+    UNKNOWN = -1,
+    MIPAS = 0,
+    AIRS = 1,
+    CLAMS = 2,
+    TROPO = 3
+};
+
 /*
 template<typename T>
 struct DataField{
@@ -57,6 +66,7 @@ struct DataField{
 struct FileData{
     FileData(){
         filename = "NOFILE";
+        fileType = UNKNOWN;
         numDataFields = 0;
     }
 
@@ -81,6 +91,7 @@ struct FileData{
     }
 
     QString filename;
+    FileTypes fileType;
     int numDataFields;
     QList<caDataField*> dataFields;
 };

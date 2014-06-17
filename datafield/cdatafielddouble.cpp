@@ -29,10 +29,21 @@ void cDataFieldDouble::setData(double *data, int numEntries){
 }
 
 void cDataFieldDouble::writeToOut(QTextStream &out){
-    if (m_NumEntries)
-        for (int i=0; i < m_NumEntries; ++i){
-            out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+    if (m_NumEntries){
+        out << m_DataName << " " << m_NumEntries << "\n";
+        if (m_DataName == "time"){
+            for (int i=0; i < m_NumEntries; ++i){
+                out << m_DataName << " " << i << ": " << m_Data[i] << " = \t"
+                    << Helpers::juliantimeToDatetime(m_Data[i]).toString("dddd dd.MMMM yyyy hh:mm:ss")
+                    << "\n";
+            }
         }
+        else{
+            for (int i=0; i < m_NumEntries; ++i){
+                out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+            }
+        }
+    }
 }
 
 void cDataFieldDouble::writeValueToOut(QTextStream &out, int index){

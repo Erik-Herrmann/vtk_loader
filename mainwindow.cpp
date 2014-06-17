@@ -159,8 +159,8 @@ void MainWindow::saveAsFile(int loaderId){
 void MainWindow::deleteLoader(loader_widget* widgetPtr){
     int i = widgetList.indexOf(widgetPtr);
 
-    threadList.at(i)->exit();
-    threadList.at(i)->terminate();
+    threadList.at(i)->quit();
+    //threadList.at(i)->terminate();
     threadList.at(i)->deleteLater();
 
     delete widgetList.at(i);
