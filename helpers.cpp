@@ -216,4 +216,17 @@ QDateTime juliantimeToDatetime(double secSince){
     return dateTime;
 }
 
+QDateTime juliantimeToDatetime(float secSince){
+    qint64 sec = secSince;
+
+    QDateTime dateTime(QDate(2000, 1, 1));
+    qint64 days = sec/SEC_PER_DAY;
+    dateTime = dateTime.addDays(days);
+    sec %= SEC_PER_DAY;
+
+    dateTime = dateTime.addSecs(sec);
+
+    return dateTime;
+}
+
 }

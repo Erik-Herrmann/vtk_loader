@@ -23,7 +23,8 @@ void vtk_loader::detectFiletype(){
         if (filedata->filename != "NOFILE"){
             if (filedata->filename.contains("mipas", Qt::CaseInsensitive))
                 filedata->fileType = MIPAS;
-            if (filedata->filename.contains("airs", Qt::CaseInsensitive))
+            if (filedata->filename.contains("airs", Qt::CaseInsensitive) ||
+                filedata->filename.contains("volcano", Qt::CaseInsensitive))
                 filedata->fileType = AIRS;
             if (filedata->filename.contains("clams", Qt::CaseInsensitive))
                 filedata->fileType = CLAMS;

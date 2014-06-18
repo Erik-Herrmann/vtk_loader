@@ -54,6 +54,7 @@ bool less_equal(vtkPoint &a, float &b);
 bool less_equal(vtkPoint &a, vtkPoint &b);
 
 QDateTime juliantimeToDatetime(double secSince);
+QDateTime juliantimeToDatetime(float secSince);
 
 }
 
