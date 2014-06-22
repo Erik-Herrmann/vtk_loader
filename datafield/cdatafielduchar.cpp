@@ -30,6 +30,7 @@ void cDataFieldUChar::setData(unsigned char *data, int numEntries){
 
 void cDataFieldUChar::writeToOut(QTextStream &out){
     if (m_NumEntries)
+        out << m_DataName << " " << m_NumEntries << "\n";
         for (int i=0; i < m_NumEntries; ++i){
             out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
         }

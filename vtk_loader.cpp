@@ -431,3 +431,31 @@ void vtk_loader::saveAsFile(QString filename){
     // enable Widget Controls
     emit enableWidgetControls(true);
 }
+
+
+QList<QList<PolyLine> > vtk_loader::createPolyLines(){
+    QList<QList<PolyLine> > lineList;
+    if (filedata->fileType != CLAMS)
+        return lineList;
+
+    cDataFieldInt *dfLines = static_cast<cDataFieldInt*>(filedata->getDatafield("LINES"));
+    cDataFieldVtkPoint *dfPoints = static_cast<cDataFieldVtkPoint*>(filedata->getDatafield("POINTS"));
+    cDataFieldDouble *dfTime = static_cast<cDataFieldDouble*>(filedata->getDatafield("time"));
+    // ... more datafields needed
+
+    int pos = 0;
+    while(pos < dfLines->numEntries()){
+        int values = dfLines->getValueAt(pos++);
+        QList<PolyLine> line;
+        for(int i=0; i < values; ++i){
+            int idx = dfLines->getValueAt(pos++);
+            PolyLine elem;
+            elem.point = dfPoints->getValueAt(idx);
+            elem.time = Helpers::juliantimeToDatetime(dfTime->getValueAt(idx));
+            //... add more data to struct
+            line.push_back(elem);
+        }
+        lineList.push_back(line);
+    }
+    return lineList;
+}

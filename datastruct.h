@@ -63,6 +63,11 @@ struct DataField{
 };
 */
 
+struct PolyLine{
+    vtkPoint point;
+    QDateTime time;
+};
+
 struct FileData{
     FileData(){
         filename = "NOFILE";

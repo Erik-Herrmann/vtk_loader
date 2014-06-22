@@ -30,6 +30,7 @@ void cDataFieldVtkPoint::setData(vtkPoint *data, int numEntries){
 
 void cDataFieldVtkPoint::writeToOut(QTextStream &out){
     if (m_NumEntries){
+        out << m_DataName << " " << m_NumEntries << "\n";
         for (int i=0; i < m_NumEntries; ++i){
             vtkPoint &p = m_Data[i];
             out << m_DataName << " " << i << ": " << p.x << " " << p.y << " " << p.z << "\n";

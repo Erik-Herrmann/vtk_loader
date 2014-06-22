@@ -92,8 +92,9 @@ void MainWindow::creatNewLoader(QString filename){
 
 // handle the Context-Menu
 void MainWindow::showCustomContext(QPoint pos){
-    // get Pointer of the Sender Widget
+    // get Pointer of the Sender Widget and Loader
     loader_widget *sendWidget = (loader_widget*)sender();
+    vtk_loader *sendLoader = loaderList.at(widgetList.indexOf(sendWidget));
     // get global right-click position
     QPoint globalPos = sendWidget->mapToGlobal(pos);
 
@@ -102,6 +103,11 @@ void MainWindow::showCustomContext(QPoint pos){
     QAction* filterAction = myMenu.addAction("apply Filter ...");
     QAction* saveTxtAction = myMenu.addAction("save *.txt");
     QAction* saveAsAction = myMenu.addAction("save as ..");
+    QAction* createPolyLineAction;
+    if (sendLoader->getFileData()->fileType == CLAMS){
+        myMenu.addSeparator();
+        createPolyLineAction = myMenu.addAction("create Polyline");
+    }
     myMenu.addSeparator();
     QAction* removeAction = myMenu.addAction("remove");
     // ...
@@ -115,7 +121,6 @@ void MainWindow::showCustomContext(QPoint pos){
     if (selectedAction)
     {
         if (selectedAction == filterAction){
-            vtk_loader *sendLoader = loaderList.at(widgetList.indexOf(sendWidget));
             vtk_filter *newFilter = new vtk_filter(sendLoader->getFileData(), this);
             newFilter->showFilters();
         }
@@ -144,11 +149,22 @@ void MainWindow::showCustomContext(QPoint pos){
         else if (selectedAction == saveAsAction){
             saveAsFile(widgetList.indexOf(sendWidget));
         }
+        else if(selectedAction == createPolyLineAction){
+            loaderList.at(widgetList.indexOf(sendWidget))->createPolyLines();
+        }
     }
     else
     {
         // nothing was chosen
     }
+
+    delete filterAction;
+    delete saveAsAction;
+    delete saveTxtAction;
+    if (createPolyLineAction){
+        delete createPolyLineAction;
+    }
+    delete removeAction;
 }
 
 void MainWindow::saveAsFile(int loaderId){
