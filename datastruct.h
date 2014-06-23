@@ -26,44 +26,6 @@ enum FileTypes{
     TROPO = 3
 };
 
-/*
-template<typename T>
-struct DataField{
-    DataField(){
-        dataname = "NONE";
-        numEntries = 0;
-        typeId = NOTYPE;
-    }
-    ~DataField(){
-        free(data);
-    }
-    int getTypeSizeFromId(MyTypes Id){
-        switch (Id) {
-        case INT_T:
-            return sizeof(int);
-        case UINT_T:
-            return sizeof(unsigned int);
-        case FLOAT_T:
-            return sizeof(float);
-        case DOUBLE_T:
-            return sizeof(double);
-        case UCHAR_T:
-            return sizeof(unsigned char);
-        case VTKPOINT_T:
-            return sizeof(vtkPoint);
-        default:
-            return 0;
-        }
-    }
-
-    QString dataname;
-    int numEntries;
-    MyTypes typeId;
-    int typeSize;
-    T *data;
-};
-*/
-
 struct PolyLine{
     vtkPoint point;
     QDateTime time;
