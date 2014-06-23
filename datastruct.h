@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include <QDateTime>
 #include "vtkpoint.h"
 #include "datafield/datafieldincludes.h"
 

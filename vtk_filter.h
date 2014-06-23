@@ -76,9 +76,11 @@ public:
     explicit vtk_filter(FileData *source, QObject *parent = 0);
     ~vtk_filter();
 
+    FileData* getFilteredData();
+
 private:
-    FileData *unfiltered;
-    FileData *filtered;
+    FileData *m_unfiltered;
+    FileData *m_filtered;
 
     QScrollArea *mainFrame;
     QVBoxLayout *mainLayout;

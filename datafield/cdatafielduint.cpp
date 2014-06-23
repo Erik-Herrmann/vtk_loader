@@ -1,5 +1,6 @@
 #include "cdatafielduint.h"
 #include "helpers.h"
+#include <QSet>
 
 cDataFieldUInt::cDataFieldUInt()
     : caDataField()
@@ -41,10 +42,8 @@ void cDataFieldUInt::writeValueToOut(QTextStream &out, int index){
         out << m_DataName << " " << index << ": " << m_Data[index] << "\n";
 }
 
-QList<int> cDataFieldUInt::filterData(int opId, QString valStr){
+void cDataFieldUInt::filterData(QList<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
-        // create List
-        QList<int> nList;
         // get compair value
         unsigned int value = valStr.toUInt();
         // create funktion pointer
@@ -73,10 +72,25 @@ QList<int> cDataFieldUInt::filterData(int opId, QString valStr){
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                nList.push_back(i);
+                filterList->push_back(i);
             }
         }
-        return nList;
     }
-    return QList<int>();
+}
+
+
+caDataField* cDataFieldUInt::getDatafieldOfListedIndices(QSet<int> &indices){
+    if (m_NumEntries){
+        unsigned int *newData = (unsigned int*)malloc(indices.count()*sizeof(unsigned int));
+        int pos = 0;
+        foreach (int i, indices) {
+            newData[pos++] = m_Data[i];
+        }
+        cDataFieldUInt *newDf = new cDataFieldUInt;
+        newDf->setName(m_DataName);
+        newDf->setData(newData, indices.count());
+
+        return static_cast<caDataField*>(newDf);
+    }
+    return 0;
 }

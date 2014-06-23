@@ -3,6 +3,7 @@
 #include <QStringList>
 #include <typeinfo>
 #include "datafield/datafieldincludes.h"
+#include "helpers.h"
 
 
 vtk_loader::vtk_loader(QObject *parent) :

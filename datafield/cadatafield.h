@@ -20,7 +20,8 @@ public:
     virtual void writeToOut(QTextStream &out) = 0;
     virtual void writeValueToOut(QTextStream &out, int index) = 0;
 
-    virtual QList<int> filterData(int opId, QString valStr) = 0 ;
+    virtual void filterData(QList<int> *filterList, int opId, QString valStr) = 0 ;
+    virtual caDataField* getDatafieldOfListedIndices(QSet<int> &indices) = 0;
 
 protected:
     QString m_DataName;

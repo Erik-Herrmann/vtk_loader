@@ -1,5 +1,6 @@
 #include "cdatafieldvtkpoint.h"
 #include "helpers.h"
+#include <QSet>
 
 cDataFieldVtkPoint::cDataFieldVtkPoint()
     : caDataField()
@@ -45,10 +46,8 @@ void cDataFieldVtkPoint::writeValueToOut(QTextStream &out, int index){
     }
 }
 
-QList<int> cDataFieldVtkPoint::filterData(int opId, QString valStr){
+void cDataFieldVtkPoint::filterData(QList<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
-        // create List
-        QList<int> nList;
         // get compair value
         float value = valStr.toFloat();
         // create funktion pointer
@@ -77,10 +76,25 @@ QList<int> cDataFieldVtkPoint::filterData(int opId, QString valStr){
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                nList.push_back(i);
+                filterList->push_back(i);
             }
         }
-        return nList;
     }
-    return QList<int>();
+}
+
+
+caDataField* cDataFieldVtkPoint::getDatafieldOfListedIndices(QSet<int> &indices){
+    if (m_NumEntries){
+        vtkPoint *newData = (vtkPoint*)malloc(indices.count()*sizeof(vtkPoint));
+        int pos = 0;
+        foreach (int i, indices) {
+            newData[pos++] = m_Data[i];
+        }
+        cDataFieldVtkPoint *newDf = new cDataFieldVtkPoint;
+        newDf->setName(m_DataName);
+        newDf->setData(newData, indices.count());
+
+        return static_cast<caDataField*>(newDf);
+    }
+    return 0;
 }

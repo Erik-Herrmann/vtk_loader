@@ -1,5 +1,6 @@
 #include "cdatafieldfloat.h"
 #include "helpers.h"
+#include <QSet>
 
 cDataFieldFloat::cDataFieldFloat()
     : caDataField()
@@ -52,10 +53,8 @@ void cDataFieldFloat::writeValueToOut(QTextStream &out, int index){
 }
 
 
-QList<int> cDataFieldFloat::filterData(int opId, QString valStr){
+void cDataFieldFloat::filterData(QList<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
-        // create List
-        QList<int> nList;
         // get compair value
         float value = valStr.toFloat();
         // create funktion pointer
@@ -84,11 +83,26 @@ QList<int> cDataFieldFloat::filterData(int opId, QString valStr){
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                nList.push_back(i);
+                filterList->push_back(i);
             }
         }
-        return nList;
     }
-    return QList<int>();
+}
+
+
+caDataField* cDataFieldFloat::getDatafieldOfListedIndices(QSet<int> &indices){
+    if (m_NumEntries){
+        float *newData = (float*)malloc(indices.count()*sizeof(float));
+        int pos = 0;
+        foreach (int i, indices) {
+            newData[pos++] = m_Data[i];
+        }
+        cDataFieldFloat *newDf = new cDataFieldFloat;
+        newDf->setName(m_DataName);
+        newDf->setData(newData, indices.count());
+
+        return static_cast<caDataField*>(newDf);
+    }
+    return 0;
 }
 

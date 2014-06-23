@@ -1,4 +1,6 @@
 #include "cdatafieldint.h"
+#include "helpers.h"
+#include <QSet>
 
 cDataFieldInt::cDataFieldInt()
     : caDataField()
@@ -55,10 +57,8 @@ void cDataFieldInt::writeValueToOut(QTextStream &out, int index){
 }
 
 
-QList<int> cDataFieldInt::filterData(int opId, QString valStr){
+void cDataFieldInt::filterData(QList<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
-        // create List
-        QList<int> nList;
         // get compair value
         int value = valStr.toInt();
         // create funktion pointer
@@ -86,12 +86,74 @@ QList<int> cDataFieldInt::filterData(int opId, QString valStr){
             break;
         }
         // compair and update List
-        for (int i=0; i < m_NumEntries; ++i){
-            if((*op)(m_Data[i], value)){
-                nList.push_back(i);
+        if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
+            int pos =0;
+            while (pos < m_NumEntries){
+                int lineSeg = m_Data[pos++];
+                for (int i=0; i < lineSeg; ++i){
+                    if((*op)(m_Data[pos], value)){
+                        filterList->push_back(m_Data[pos++]);
+                    }
+                    else {
+                        pos++;
+                    }
+                }
             }
         }
-        return nList;
+        else {
+            for (int i=0; i < m_NumEntries; ++i){
+                if((*op)(m_Data[i], value)){
+                    filterList->push_back(i);
+                }
+            }
+        }
     }
-    return QList<int>();
+}
+
+
+caDataField* cDataFieldInt::getDatafieldOfListedIndices(QSet<int> &indices){
+    if (m_NumEntries){
+        if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
+            int pos =0;
+            QList<QList<int> > lines;
+            while (pos < m_NumEntries){
+                int lineSeg = m_Data[pos++];
+                QList<int> line;
+                for (int i=0; i < lineSeg; ++i){
+                    if (indices.contains(m_Data[pos])){
+                        line.push_back(m_Data[pos++]);
+                    }
+                    else{
+                        pos++;
+                    }
+                }
+                lines.push_back(line);
+            }
+            int sumEntries = 0;
+            foreach(QList<int> line, lines){
+                sumEntries += line.size()+1;
+            }
+            int *newData = (int*)malloc(sumEntries*sizeof(int));
+            pos = 0;
+            foreach(QList<int> line, lines){
+                newData[pos++] = line.size();
+                foreach(int l, line){
+                    newData[pos++] = l;
+                }
+            }
+        }
+        else {
+            int *newData = (int*)malloc(indices.count()*sizeof(int));
+            int pos = 0;
+            foreach (int i, indices) {
+                newData[pos++] = m_Data[i];
+            }
+            cDataFieldInt *newDf = new cDataFieldInt;
+            newDf->setName(m_DataName);
+            newDf->setData(newData, indices.count());
+
+            return static_cast<caDataField*>(newDf);
+        }
+    }
+    return 0;
 }

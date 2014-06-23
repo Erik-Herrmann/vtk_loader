@@ -1,8 +1,10 @@
 #include "vtk_filter.h"
+#include <QSet>
+#include <QtAlgorithms>
 
 vtk_filter::vtk_filter(FileData *source, QObject *parent) :
     QObject(parent),
-    unfiltered(source)
+    m_unfiltered(source)
 {
     mainFrame = new QScrollArea;
     mainFrame->setWindowTitle("Select Filters ...");
@@ -15,8 +17,8 @@ vtk_filter::vtk_filter(FileData *source, QObject *parent) :
     mainLayout->addLayout(header, 14);
 
     int row = 1;
-    for (QList<caDataField*>::Iterator curFieldIt = unfiltered->dataFields.begin();
-         curFieldIt != unfiltered->dataFields.end(); ++curFieldIt)
+    for (QList<caDataField*>::Iterator curFieldIt = m_unfiltered->dataFields.begin();
+         curFieldIt != m_unfiltered->dataFields.end(); ++curFieldIt)
     {
         FilterLayout *newFilterLay = new FilterLayout;
         filterLayouts.push_back(newFilterLay);
@@ -61,9 +63,15 @@ vtk_filter::~vtk_filter(){
     }
     filterLayouts.clear();
     mainFrame->deleteLater();
-    unfiltered = 0;
+    m_unfiltered = 0;
 
 }
+
+
+FileData* vtk_filter::getFilteredData(){
+    return m_filtered;
+}
+
 
 void vtk_filter::compValNumChanged(int idx){
     QComboBox *sendBox = (QComboBox*)sender();
@@ -104,11 +112,11 @@ void vtk_filter::createNewCompLayout(FilterLayout *filterLay){
 
     newValComp->cobOperator = new QComboBox;
     newValComp->cobOperator->addItem("==");
-    newValComp->cobOperator->addItem(">");
-    newValComp->cobOperator->addItem("<");
-    newValComp->cobOperator->addItem(">=");
-    newValComp->cobOperator->addItem("<=");
     newValComp->cobOperator->addItem("!=");
+    newValComp->cobOperator->addItem(">");
+    newValComp->cobOperator->addItem(">=");
+    newValComp->cobOperator->addItem("<");
+    newValComp->cobOperator->addItem("<=");
 
     newValComp->ledCompValue = new QLineEdit;
 
@@ -127,14 +135,36 @@ void vtk_filter::showFilters(){
 
 void vtk_filter::applyFilters(){
     int dfIdx = 0;
-    filtered = new FileData;
-    filtered->filename = unfiltered->filename;
+    m_filtered = new FileData;
+    m_filtered->filename = m_unfiltered->filename;
+    m_filtered->fileType = m_unfiltered->fileType;
+    // apply choosen filters and get List of filtered entries
+    // the entries are the one who match the filter constraints
+    QList<int> filterList;
     foreach (FilterLayout* filter, filterLayouts)
     {
         if (filter->chbEnable->isChecked()){
-        // ToDo:
-
+            caDataField *df = m_unfiltered->getDatafield(dfIdx);
+            for (int i=0; i < filter->cobNumComp->currentIndex()+1; ++i){
+                df->filterData(&filterList,
+                               filter->compairs.at(i)->cobOperator->currentIndex(),
+                               filter->compairs.at(i)->ledCompValue->text());
+            }
         }
         dfIdx++;
+    }
+
+    // get filtered data from unfiltered
+    // ...
+
+    // remove duplicates and sort in ascending order
+    qSort(filterList);
+    QSet<int> filterSet = filterList.toSet();
+    // create filtered data
+    for (int i=0; i < m_unfiltered->numDataFields; ++i){
+        m_filtered->dataFields.push_back(
+                    m_unfiltered->getDatafield(i)
+                    ->getDatafieldOfListedIndices(filterSet));
+        m_filtered->numDataFields++;
     }
 }

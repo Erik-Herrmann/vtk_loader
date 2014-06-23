@@ -17,7 +17,8 @@ public:
 
     void setData(unsigned char *data, int numEntries);
 
-    QList<int> filterData(int opId, QString valStr);
+    void filterData(QList<int> *filterList, int opId, QString valStr);
+    caDataField* getDatafieldOfListedIndices(QSet<int> &indices);
 
 private:
     unsigned char *m_Data;
