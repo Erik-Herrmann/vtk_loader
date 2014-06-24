@@ -8,7 +8,7 @@ cDataFieldInt::cDataFieldInt()
 }
 
 cDataFieldInt::~cDataFieldInt(){
-    free(m_Data);
+    delete[] m_Data;
 }
 
 int* cDataFieldInt::getDataPtr(){
@@ -133,7 +133,7 @@ caDataField* cDataFieldInt::getDatafieldOfListedIndices(QSet<int> &indices){
             foreach(QList<int> line, lines){
                 sumEntries += line.size()+1;
             }
-            int *newData = (int*)malloc(sumEntries*sizeof(int));
+            int *newData = new int[sumEntries];
             pos = 0;
             foreach(QList<int> line, lines){
                 newData[pos++] = line.size();
@@ -143,7 +143,7 @@ caDataField* cDataFieldInt::getDatafieldOfListedIndices(QSet<int> &indices){
             }
         }
         else {
-            int *newData = (int*)malloc(indices.count()*sizeof(int));
+            int *newData = new int[indices.count()];
             int pos = 0;
             foreach (int i, indices) {
                 newData[pos++] = m_Data[i];

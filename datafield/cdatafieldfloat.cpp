@@ -8,7 +8,7 @@ cDataFieldFloat::cDataFieldFloat()
 }
 
 cDataFieldFloat::~cDataFieldFloat(){
-    free(m_Data);
+    delete[] m_Data;
 }
 
 float* cDataFieldFloat::getDataPtr(){
@@ -92,7 +92,7 @@ void cDataFieldFloat::filterData(QList<int> *filterList, int opId, QString valSt
 
 caDataField* cDataFieldFloat::getDatafieldOfListedIndices(QSet<int> &indices){
     if (m_NumEntries){
-        float *newData = (float*)malloc(indices.count()*sizeof(float));
+        float *newData = new float[indices.count()];
         int pos = 0;
         foreach (int i, indices) {
             newData[pos++] = m_Data[i];

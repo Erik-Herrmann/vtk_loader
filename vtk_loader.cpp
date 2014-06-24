@@ -84,7 +84,7 @@ void vtk_loader::loadData(QString filename){
         else {
             if (strings.at(0) == "POINTS"){
                 int values = strings.at(1).toInt();
-                vtkPoint* data = (vtkPoint*)malloc(values*sizeof(vtkPoint));
+                vtkPoint* data = new vtkPoint[values];
                 int progressUpdate = values/100;
                 emit resetProgress();
                 emit setProgress(QString("Loading Points (%1) ...").arg(values));
@@ -129,7 +129,7 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
 {
     QString fieldName = line->left(line->indexOf(' '));
 
-    T* data = (T*)malloc(numVal*sizeof(T));
+    T* data = new T[numVal];
     if (lines > 1){
         emit setProgress(QString("Loading %1 (%2) ...")
                          .arg(fieldName).arg(lines));

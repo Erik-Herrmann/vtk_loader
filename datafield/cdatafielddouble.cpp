@@ -8,7 +8,7 @@ cDataFieldDouble::cDataFieldDouble()
 }
 
 cDataFieldDouble::~cDataFieldDouble(){
-    free(m_Data);
+    delete[] m_Data;
 }
 
 double* cDataFieldDouble::getDataPtr(){
@@ -90,7 +90,7 @@ void cDataFieldDouble::filterData(QList<int> *filterList, int opId, QString valS
 
 caDataField* cDataFieldDouble::getDatafieldOfListedIndices(QSet<int> &indices){
     if (m_NumEntries){
-        double *newData = (double*)malloc(indices.count()*sizeof(double));
+        double *newData = new double[indices.count()];
         int pos = 0;
         foreach (int i, indices) {
             newData[pos++] = m_Data[i];

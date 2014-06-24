@@ -8,7 +8,7 @@ cDataFieldUInt::cDataFieldUInt()
 }
 
 cDataFieldUInt::~cDataFieldUInt(){
-    free(m_Data);
+    delete[] m_Data;
 }
 
 unsigned int* cDataFieldUInt::getDataPtr(){
@@ -81,7 +81,7 @@ void cDataFieldUInt::filterData(QList<int> *filterList, int opId, QString valStr
 
 caDataField* cDataFieldUInt::getDatafieldOfListedIndices(QSet<int> &indices){
     if (m_NumEntries){
-        unsigned int *newData = (unsigned int*)malloc(indices.count()*sizeof(unsigned int));
+        unsigned int *newData = new unsigned int[indices.count()];
         int pos = 0;
         foreach (int i, indices) {
             newData[pos++] = m_Data[i];

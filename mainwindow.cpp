@@ -78,6 +78,7 @@ void MainWindow::creatNewLoader(QString filename){
     connect(newLoader, SIGNAL(resetProgress()), newWidget, SLOT(resetProgress()));
     connect(newLoader, SIGNAL(enableWidgetControls(bool)), newWidget, SLOT(enableControls(bool)));
     connect(newWidget, SIGNAL(deleteLoader(loader_widget*)), this, SLOT(deleteLoader(loader_widget*)));
+    connect(newThread, SIGNAL(finished()), newThread, SLOT(deleteLater()));
 
     // Add Widget to QListWidget
     QListWidgetItem *item = new QListWidgetItem(ui->listWidget);
@@ -175,17 +176,17 @@ void MainWindow::saveAsFile(int loaderId){
 void MainWindow::deleteLoader(loader_widget* widgetPtr){
     int i = widgetList.indexOf(widgetPtr);
 
+    ui->listWidget->removeItemWidget(ui->listWidget->item(i));
+    delete ui->listWidget->item(i);
+
+    widgetList.at(i)->deleteLater();
+    loaderList.at(i)->deleteLater();
+
     threadList.at(i)->quit();
     //threadList.at(i)->terminate();
-    threadList.at(i)->deleteLater();
-
-    delete widgetList.at(i);
-    delete loaderList.at(i);
+    //threadList.at(i)->deleteLater();
 
     widgetList.removeAt(i);
     loaderList.removeAt(i);
     threadList.removeAt(i);
-
-    ui->listWidget->removeItemWidget(ui->listWidget->item(i));
-    delete ui->listWidget->item(i);
 }

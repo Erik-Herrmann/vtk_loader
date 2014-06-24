@@ -8,7 +8,7 @@ cDataFieldVtkPoint::cDataFieldVtkPoint()
 }
 
 cDataFieldVtkPoint::~cDataFieldVtkPoint(){
-    free(m_Data);
+    delete[] m_Data;
 }
 
 vtkPoint* cDataFieldVtkPoint::getDataPtr(){
@@ -85,7 +85,7 @@ void cDataFieldVtkPoint::filterData(QList<int> *filterList, int opId, QString va
 
 caDataField* cDataFieldVtkPoint::getDatafieldOfListedIndices(QSet<int> &indices){
     if (m_NumEntries){
-        vtkPoint *newData = (vtkPoint*)malloc(indices.count()*sizeof(vtkPoint));
+        vtkPoint *newData = new vtkPoint[indices.count()];
         int pos = 0;
         foreach (int i, indices) {
             newData[pos++] = m_Data[i];

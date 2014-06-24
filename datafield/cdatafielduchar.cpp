@@ -8,7 +8,7 @@ cDataFieldUChar::cDataFieldUChar()
 }
 
 cDataFieldUChar::~cDataFieldUChar(){
-    free(m_Data);
+    delete[] m_Data;
 }
 
 unsigned char* cDataFieldUChar::getDataPtr(){
@@ -81,7 +81,7 @@ void cDataFieldUChar::filterData(QList<int> *filterList, int opId, QString valSt
 
 caDataField* cDataFieldUChar::getDatafieldOfListedIndices(QSet<int> &indices){
     if (m_NumEntries){
-        unsigned char *newData = (unsigned char*)malloc(indices.count()*sizeof(unsigned char));
+        unsigned char *newData = new unsigned char[indices.count()];
         int pos = 0;
         foreach (int i, indices) {
             newData[pos++] = m_Data[i];
