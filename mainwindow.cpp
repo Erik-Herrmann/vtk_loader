@@ -103,7 +103,7 @@ void MainWindow::showCustomContext(QPoint pos){
     QAction* filterAction = myMenu.addAction("apply Filter ...");
     QAction* saveTxtAction = myMenu.addAction("save *.txt");
     QAction* saveAsAction = myMenu.addAction("save as ..");
-    QAction* createPolyLineAction;
+    QAction* createPolyLineAction = 0;
     if (sendLoader->getFileData()->fileType == CLAMS){
         myMenu.addSeparator();
         createPolyLineAction = myMenu.addAction("create Polyline");
