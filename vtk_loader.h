@@ -14,6 +14,7 @@ public:
     ~vtk_loader();
 
     FileData* getFileData();
+    void switchFileData(FileData *newData);
     QList<QList<PolyLine> > createPolyLines();
 
 private:

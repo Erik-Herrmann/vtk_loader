@@ -19,8 +19,8 @@ public:
 
     void setData(vtkPoint *data, int numEntries);
 
-    void filterData(QList<int> *filterList, int opId, QString valStr);
-    caDataField* getDatafieldOfListedIndices(QSet<int> &indices);
+    void filterData(std::set<int> *filterList, int opId, QString valStr);
+    caDataField* getDatafieldOfListedIndices(std::set<int> &indices);
 
 private:
     vtkPoint *m_Data;

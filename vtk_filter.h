@@ -11,7 +11,9 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QPushButton>
 #include "datastruct.h"
+#include "vtk_loader.h"
 
 
 struct ValueCompLay{
@@ -73,17 +75,19 @@ class vtk_filter : public QObject
 {
     Q_OBJECT
 public:
-    explicit vtk_filter(FileData *source, QObject *parent = 0);
+    explicit vtk_filter(vtk_loader *loader, QObject *parent = 0);
     ~vtk_filter();
 
     FileData* getFilteredData();
 
 private:
+    vtk_loader *m_LoaderPtr;
     FileData *m_unfiltered;
     FileData *m_filtered;
 
     QScrollArea *mainFrame;
     QVBoxLayout *mainLayout;
+    QPushButton *applyButton;
     QList<FilterLayout*> filterLayouts;
 
     void createNewCompLayout(FilterLayout *filterLay);

@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QTextStream>
-#include <QList>
+#include <set>
 
 class caDataField
 {
@@ -20,8 +20,8 @@ public:
     virtual void writeToOut(QTextStream &out) = 0;
     virtual void writeValueToOut(QTextStream &out, int index) = 0;
 
-    virtual void filterData(QList<int> *filterList, int opId, QString valStr) = 0 ;
-    virtual caDataField* getDatafieldOfListedIndices(QSet<int> &indices) = 0;
+    virtual void filterData(std::set<int> *filterList, int opId, QString valStr) = 0 ;
+    virtual caDataField* getDatafieldOfListedIndices(std::set<int> &indices) = 0;
 
 protected:
     QString m_DataName;

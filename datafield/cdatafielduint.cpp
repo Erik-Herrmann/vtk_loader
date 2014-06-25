@@ -42,7 +42,7 @@ void cDataFieldUInt::writeValueToOut(QTextStream &out, int index){
         out << m_DataName << " " << index << ": " << m_Data[index] << "\n";
 }
 
-void cDataFieldUInt::filterData(QList<int> *filterList, int opId, QString valStr){
+void cDataFieldUInt::filterData(std::set<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
         // get compair value
         unsigned int value = valStr.toUInt();
@@ -72,23 +72,23 @@ void cDataFieldUInt::filterData(QList<int> *filterList, int opId, QString valStr
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                filterList->push_back(i);
+                filterList->insert(i);
             }
         }
     }
 }
 
 
-caDataField* cDataFieldUInt::getDatafieldOfListedIndices(QSet<int> &indices){
+caDataField* cDataFieldUInt::getDatafieldOfListedIndices(std::set<int> &indices){
     if (m_NumEntries){
-        unsigned int *newData = new unsigned int[indices.count()];
+        unsigned int *newData = new unsigned int[indices.size()];
         int pos = 0;
-        foreach (int i, indices) {
+        for (int i : indices) {
             newData[pos++] = m_Data[i];
         }
         cDataFieldUInt *newDf = new cDataFieldUInt;
         newDf->setName(m_DataName);
-        newDf->setData(newData, indices.count());
+        newDf->setData(newData, indices.size());
 
         return static_cast<caDataField*>(newDf);
     }

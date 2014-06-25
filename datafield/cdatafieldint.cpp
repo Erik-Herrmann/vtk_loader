@@ -57,7 +57,7 @@ void cDataFieldInt::writeValueToOut(QTextStream &out, int index){
 }
 
 
-void cDataFieldInt::filterData(QList<int> *filterList, int opId, QString valStr){
+void cDataFieldInt::filterData(std::set<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
         // get compair value
         int value = valStr.toInt();
@@ -92,7 +92,7 @@ void cDataFieldInt::filterData(QList<int> *filterList, int opId, QString valStr)
                 int lineSeg = m_Data[pos++];
                 for (int i=0; i < lineSeg; ++i){
                     if((*op)(m_Data[pos], value)){
-                        filterList->push_back(m_Data[pos++]);
+                        filterList->insert(m_Data[pos++]);
                     }
                     else {
                         pos++;
@@ -103,7 +103,7 @@ void cDataFieldInt::filterData(QList<int> *filterList, int opId, QString valStr)
         else {
             for (int i=0; i < m_NumEntries; ++i){
                 if((*op)(m_Data[i], value)){
-                    filterList->push_back(i);
+                    filterList->insert(i);
                 }
             }
         }
@@ -111,7 +111,7 @@ void cDataFieldInt::filterData(QList<int> *filterList, int opId, QString valStr)
 }
 
 
-caDataField* cDataFieldInt::getDatafieldOfListedIndices(QSet<int> &indices){
+caDataField* cDataFieldInt::getDatafieldOfListedIndices(std::set<int> &indices){
     if (m_NumEntries){
         if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
             int pos =0;
@@ -120,12 +120,11 @@ caDataField* cDataFieldInt::getDatafieldOfListedIndices(QSet<int> &indices){
                 int lineSeg = m_Data[pos++];
                 QList<int> line;
                 for (int i=0; i < lineSeg; ++i){
-                    if (indices.contains(m_Data[pos])){
-                        line.push_back(m_Data[pos++]);
+                    std::set<int>::iterator elemIt = indices.find(m_Data[pos]);
+                    if (elemIt != indices.end()){
+                        line.push_back(std::distance(indices.begin(), elemIt));
                     }
-                    else{
-                        pos++;
-                    }
+                    pos++;
                 }
                 lines.push_back(line);
             }
@@ -141,16 +140,21 @@ caDataField* cDataFieldInt::getDatafieldOfListedIndices(QSet<int> &indices){
                     newData[pos++] = l;
                 }
             }
+            cDataFieldInt *newDf = new cDataFieldInt;
+            newDf->setName(m_DataName);
+            newDf->setData(newData, sumEntries);
+
+            return static_cast<caDataField*>(newDf);
         }
         else {
-            int *newData = new int[indices.count()];
+            int *newData = new int[indices.size()];
             int pos = 0;
-            foreach (int i, indices) {
+            for (int i : indices) {
                 newData[pos++] = m_Data[i];
             }
             cDataFieldInt *newDf = new cDataFieldInt;
             newDf->setName(m_DataName);
-            newDf->setData(newData, indices.count());
+            newDf->setData(newData, indices.size());
 
             return static_cast<caDataField*>(newDf);
         }

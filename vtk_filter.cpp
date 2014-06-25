@@ -2,9 +2,10 @@
 #include <QSet>
 #include <QtAlgorithms>
 
-vtk_filter::vtk_filter(FileData *source, QObject *parent) :
+vtk_filter::vtk_filter(vtk_loader *loader, QObject *parent) :
     QObject(parent),
-    m_unfiltered(source)
+    m_LoaderPtr(loader),
+    m_unfiltered(loader->getFileData())
 {
     mainFrame = new QScrollArea;
     mainFrame->setWindowTitle("Select Filters ...");
@@ -52,6 +53,10 @@ vtk_filter::vtk_filter(FileData *source, QObject *parent) :
         row++;
     }
 
+    applyButton = new QPushButton("apply");
+    connect(applyButton, SIGNAL(clicked()), this, SLOT(applyFilters()));
+    mainLayout->addWidget(applyButton);
+
     mainFrame->setLayout(mainLayout);
 
 }
@@ -62,9 +67,10 @@ vtk_filter::~vtk_filter(){
         delete filterLay;
     }
     filterLayouts.clear();
+    disconnect(applyButton, SIGNAL(clicked()), this, SLOT(applyFilters()));
+    delete applyButton;
     mainFrame->deleteLater();
     m_unfiltered = 0;
-
 }
 
 
@@ -134,13 +140,21 @@ void vtk_filter::showFilters(){
 }
 
 void vtk_filter::applyFilters(){
+    mainFrame->close();
+
+    // TODO:
+    // to prevent errors
+    // still need some specialisation for CLAMS data
+    if (m_unfiltered->fileType == "CLAMS")
+        return;
+
     int dfIdx = 0;
     m_filtered = new FileData;
     m_filtered->filename = m_unfiltered->filename;
     m_filtered->fileType = m_unfiltered->fileType;
     // apply choosen filters and get List of filtered entries
     // the entries are the one who match the filter constraints
-    QList<int> filterList;
+    std::set<int> filterList;
     foreach (FilterLayout* filter, filterLayouts)
     {
         if (filter->chbEnable->isChecked()){
@@ -157,14 +171,17 @@ void vtk_filter::applyFilters(){
     // get filtered data from unfiltered
     // ...
 
-    // remove duplicates and sort in ascending order
-    qSort(filterList);
-    QSet<int> filterSet = filterList.toSet();
     // create filtered data
     for (int i=0; i < m_unfiltered->numDataFields; ++i){
         m_filtered->dataFields.push_back(
                     m_unfiltered->getDatafield(i)
-                    ->getDatafieldOfListedIndices(filterSet));
+                    ->getDatafieldOfListedIndices(filterList));
         m_filtered->numDataFields++;
     }
+
+    m_LoaderPtr->switchFileData(m_filtered);
+    delete m_unfiltered;
+
+    this->deleteLater();
 }
+

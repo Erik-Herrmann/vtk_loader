@@ -19,6 +19,10 @@ FileData* vtk_loader::getFileData(){
     return filedata;
 }
 
+void vtk_loader::switchFileData(FileData *newData){
+    filedata = newData;
+}
+
 void vtk_loader::detectFiletype(){
     if(filedata)
         if (filedata->filename != "NOFILE"){

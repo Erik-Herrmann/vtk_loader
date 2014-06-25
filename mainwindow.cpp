@@ -122,8 +122,9 @@ void MainWindow::showCustomContext(QPoint pos){
     if (selectedAction)
     {
         if (selectedAction == filterAction){
-            vtk_filter *newFilter = new vtk_filter(sendLoader->getFileData(), this);
-            newFilter->showFilters();
+            vtk_filter *newFilter = new vtk_filter(sendLoader, this);
+            //newFilter->moveToThread(threadList.at(widgetList.indexOf(sendWidget)));
+            QMetaObject::invokeMethod(newFilter, "showFilters");
         }
         // delete selected Items
         if (selectedAction == removeAction){

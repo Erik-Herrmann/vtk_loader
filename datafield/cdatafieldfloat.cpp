@@ -53,7 +53,7 @@ void cDataFieldFloat::writeValueToOut(QTextStream &out, int index){
 }
 
 
-void cDataFieldFloat::filterData(QList<int> *filterList, int opId, QString valStr){
+void cDataFieldFloat::filterData(std::set<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
         // get compair value
         float value = valStr.toFloat();
@@ -83,23 +83,23 @@ void cDataFieldFloat::filterData(QList<int> *filterList, int opId, QString valSt
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                filterList->push_back(i);
+                filterList->insert(i);
             }
         }
     }
 }
 
 
-caDataField* cDataFieldFloat::getDatafieldOfListedIndices(QSet<int> &indices){
+caDataField* cDataFieldFloat::getDatafieldOfListedIndices(std::set<int> &indices){
     if (m_NumEntries){
-        float *newData = new float[indices.count()];
+        float *newData = new float[indices.size()];
         int pos = 0;
-        foreach (int i, indices) {
+        for (int i : indices) {
             newData[pos++] = m_Data[i];
         }
         cDataFieldFloat *newDf = new cDataFieldFloat;
         newDf->setName(m_DataName);
-        newDf->setData(newData, indices.count());
+        newDf->setData(newData, indices.size());
 
         return static_cast<caDataField*>(newDf);
     }

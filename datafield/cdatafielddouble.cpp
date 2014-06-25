@@ -52,7 +52,7 @@ void cDataFieldDouble::writeValueToOut(QTextStream &out, int index){
         out << m_DataName << " " << index << ": " << m_Data[index] << "\n";
 }
 
-void cDataFieldDouble::filterData(QList<int> *filterList, int opId, QString valStr){
+void cDataFieldDouble::filterData(std::set<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
         // get compair value
         double value = valStr.toDouble();
@@ -82,22 +82,22 @@ void cDataFieldDouble::filterData(QList<int> *filterList, int opId, QString valS
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                filterList->push_back(i);
+                filterList->insert(i);
             }
         }
     }
 }
 
-caDataField* cDataFieldDouble::getDatafieldOfListedIndices(QSet<int> &indices){
+caDataField* cDataFieldDouble::getDatafieldOfListedIndices(std::set<int> &indices){
     if (m_NumEntries){
-        double *newData = new double[indices.count()];
+        double *newData = new double[indices.size()];
         int pos = 0;
-        foreach (int i, indices) {
+        for (int i : indices) {
             newData[pos++] = m_Data[i];
         }
         cDataFieldDouble *newDf = new cDataFieldDouble;
         newDf->setName(m_DataName);
-        newDf->setData(newData, indices.count());
+        newDf->setData(newData, indices.size());
 
         return static_cast<caDataField*>(newDf);
     }

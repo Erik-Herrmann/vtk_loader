@@ -46,7 +46,7 @@ void cDataFieldVtkPoint::writeValueToOut(QTextStream &out, int index){
     }
 }
 
-void cDataFieldVtkPoint::filterData(QList<int> *filterList, int opId, QString valStr){
+void cDataFieldVtkPoint::filterData(std::set<int> *filterList, int opId, QString valStr){
     if (m_NumEntries){
         // get compair value
         float value = valStr.toFloat();
@@ -76,23 +76,23 @@ void cDataFieldVtkPoint::filterData(QList<int> *filterList, int opId, QString va
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
             if(op(m_Data[i], value)){
-                filterList->push_back(i);
+                filterList->insert(i);
             }
         }
     }
 }
 
 
-caDataField* cDataFieldVtkPoint::getDatafieldOfListedIndices(QSet<int> &indices){
+caDataField* cDataFieldVtkPoint::getDatafieldOfListedIndices(std::set<int> &indices){
     if (m_NumEntries){
-        vtkPoint *newData = new vtkPoint[indices.count()];
+        vtkPoint *newData = new vtkPoint[indices.size()];
         int pos = 0;
-        foreach (int i, indices) {
+        for (int i : indices) {
             newData[pos++] = m_Data[i];
         }
         cDataFieldVtkPoint *newDf = new cDataFieldVtkPoint;
         newDf->setName(m_DataName);
-        newDf->setData(newData, indices.count());
+        newDf->setData(newData, indices.size());
 
         return static_cast<caDataField*>(newDf);
     }
