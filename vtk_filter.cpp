@@ -145,7 +145,7 @@ void vtk_filter::applyFilters(){
     // TODO:
     // to prevent errors
     // still need some specialisation for CLAMS data
-    if (m_unfiltered->fileType == "CLAMS")
+    if (m_unfiltered->fileType == CLAMS)
         return;
 
     int dfIdx = 0;

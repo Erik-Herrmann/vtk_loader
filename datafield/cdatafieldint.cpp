@@ -130,14 +130,17 @@ caDataField* cDataFieldInt::getDatafieldOfListedIndices(std::set<int> &indices){
             }
             int sumEntries = 0;
             foreach(QList<int> line, lines){
-                sumEntries += line.size()+1;
+                if (!line.isEmpty())
+                    sumEntries += line.size()+1;
             }
             int *newData = new int[sumEntries];
             pos = 0;
             foreach(QList<int> line, lines){
-                newData[pos++] = line.size();
-                foreach(int l, line){
-                    newData[pos++] = l;
+                if (!line.isEmpty()){
+                    newData[pos++] = line.size();
+                    foreach(int l, line){
+                        newData[pos++] = l;
+                    }
                 }
             }
             cDataFieldInt *newDf = new cDataFieldInt;

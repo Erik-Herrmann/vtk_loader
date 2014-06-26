@@ -13,21 +13,24 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setAcceptDrops(true);
     connect(ui->actionLoad_vtk, SIGNAL(triggered()), this, SLOT(loadVTKFile()));
+    connect(ui->actionClear_List, SIGNAL(triggered()), this, SLOT(clearList()));
+    connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 MainWindow::~MainWindow()
 {
+    clearList();
     delete ui;
-    for (QList<vtk_loader*>::Iterator i = loaderList.begin(); i != loaderList.end(); ++i){
-        delete *i;
-    }
-    for (QList<QThread*>::Iterator i = threadList.begin(); i !=  threadList.end(); ++i){
-        (*i)->exit();
-        (*i)->deleteLater();
-    }
-    for (QList<loader_widget*>::Iterator i = widgetList.begin(); i != widgetList.end(); ++i){
-        delete *i;
-    }
+//    for (QList<vtk_loader*>::Iterator i = loaderList.begin(); i != loaderList.end(); ++i){
+//        delete *i;
+//    }
+//    for (QList<QThread*>::Iterator i = threadList.begin(); i !=  threadList.end(); ++i){
+//        (*i)->quit();
+//        (*i)->deleteLater();
+//    }
+//    for (QList<loader_widget*>::Iterator i = widgetList.begin(); i != widgetList.end(); ++i){
+//        delete *i;
+//    }
 }
 
 void MainWindow::dropEvent(QDropEvent *event){
@@ -40,6 +43,17 @@ void MainWindow::dropEvent(QDropEvent *event){
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event){
     event->accept();
+}
+
+void MainWindow::clearList(){
+    foreach (loader_widget* wid, widgetList){
+        deleteLoader(wid);
+    }
+}
+
+void MainWindow::closeProgram(){
+    clearList();
+    close();
 }
 
 void MainWindow::loadVTKFile(){

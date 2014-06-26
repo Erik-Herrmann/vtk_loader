@@ -47,6 +47,9 @@
      <string>Datei</string>
     </property>
     <addaction name="actionLoad_vtk"/>
+    <addaction name="actionClear_List"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
    </widget>
    <addaction name="menuLoad"/>
   </widget>
@@ -62,6 +65,16 @@
   <action name="actionLoad_vtk">
    <property name="text">
     <string>Load *.vtk</string>
+   </property>
+  </action>
+  <action name="actionClear_List">
+   <property name="text">
+    <string>clear List</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>close</string>
    </property>
   </action>
  </widget>

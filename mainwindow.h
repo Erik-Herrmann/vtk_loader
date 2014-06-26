@@ -42,6 +42,8 @@ public slots:
     void saveAsFile(int loaderId);
     void deleteLoader(loader_widget* widgetPtr);
     void showCustomContext(QPoint pos);
+    void clearList();
+    void closeProgram();
 };
 
 #endif // MAINWINDOW_H

@@ -299,6 +299,8 @@ void vtk_loader::saveAsFile(QString filename){
     outFile->close();
     delete outFile;
 
+    // Progess -> 100%
+    emit addProgress(100-(filedata->numDataFields*progUpPerField));
     emit setProgress(" >> DONE! <<");
 
     // enable Widget Controls
