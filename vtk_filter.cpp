@@ -155,14 +155,29 @@ void vtk_filter::applyFilters(){
     // apply choosen filters and get List of filtered entries
     // the entries are the one who match the filter constraints
     std::set<int> filterList;
+    bool firstFilter = true;
     foreach (FilterLayout* filter, filterLayouts)
     {
         if (filter->chbEnable->isChecked()){
             caDataField *df = m_unfiltered->getDatafield(dfIdx);
             for (int i=0; i < filter->cobNumComp->currentIndex()+1; ++i){
-                df->filterData(&filterList,
+                std::set<int> curFilter;
+                df->filterData(&curFilter,
                                filter->compairs.at(i)->cobOperator->currentIndex(),
                                filter->compairs.at(i)->ledCompValue->text());
+
+                if (firstFilter){
+                    filterList = curFilter;
+                    firstFilter = false;
+                }
+                else {
+                    std::vector<int> tmpVec(std::min(filterList.size(), curFilter.size()));
+                    std::vector<int>::iterator it;
+                    it = std::set_intersection(filterList.begin(), filterList.end(), curFilter.begin(), curFilter.end(), tmpVec.begin());
+                    tmpVec.resize(it-tmpVec.begin());
+                    std::set<int> tmpSet(tmpVec.begin(), tmpVec.end());
+                    filterList = tmpSet;
+                }
             }
         }
         dfIdx++;
