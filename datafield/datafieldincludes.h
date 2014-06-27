@@ -8,5 +8,6 @@
 #include "cdatafielddouble.h"
 #include "cdatafielduchar.h"
 #include "cdatafieldvtkpoint.h"
+#include "cdatafieldt.h"
 
 #endif // DATAFIELDINCLUDES_H

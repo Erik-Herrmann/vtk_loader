@@ -104,7 +104,7 @@ void vtk_loader::loadData(QString filename){
                     if (!(i%progressUpdate))
                         emit addProgress(1);
                 }
-                cDataFieldVtkPoint *df = new cDataFieldVtkPoint;
+                cDataFieldT<vtkPoint> *df = new cDataFieldT<vtkPoint>;
                 df->setName(strings.at(0));
                 df->setData(data, values);
                 filedata->dataFields.push_back(df);
@@ -169,64 +169,11 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         }
     }
 
-    switch (checkType<T>()) {
-    case INT_T:
-        {
-            cDataFieldInt* df = new cDataFieldInt;
-            df->setName(fieldName);
-            df->setData((int*)data, numVal);
-            filedata->dataFields.push_back(df);
-            filedata->numDataFields++;
-        }
-        break;
-    case UINT_T:
-        {
-            cDataFieldUInt* df = new cDataFieldUInt;
-            df->setName(fieldName);
-            df->setData((unsigned int*)data, numVal);
-            filedata->dataFields.push_back(df);
-            filedata->numDataFields++;
-        }
-        break;
-    case FLOAT_T:
-    {
-        cDataFieldFloat* df = new cDataFieldFloat;
-        df->setName(fieldName);
-        df->setData((float*)data, numVal);
-        filedata->dataFields.push_back(df);
-        filedata->numDataFields++;
-    }
-        break;
-    case DOUBLE_T:
-    {
-        cDataFieldDouble* df = new cDataFieldDouble;
-        df->setName(fieldName);
-        df->setData((double*)data, numVal);
-        filedata->dataFields.push_back(df);
-        filedata->numDataFields++;
-    }
-        break;
-    case UCHAR_T:
-    {
-        cDataFieldUChar* df = new cDataFieldUChar;
-        df->setName(fieldName);
-        df->setData((unsigned char*)data, numVal);
-        filedata->dataFields.push_back(df);
-        filedata->numDataFields++;
-    }
-        break;
-    case VTKPOINT_T:
-    {
-        cDataFieldVtkPoint* df = new cDataFieldVtkPoint;
-        df->setName(fieldName);
-        df->setData((vtkPoint*)data, numVal);
-        filedata->dataFields.push_back(df);
-        filedata->numDataFields++;
-    }
-        break;
-    default:
-        break;
-    }
+    cDataFieldT<T>* df = new cDataFieldT<T>;
+    df->setName(fieldName);
+    df->setData((T*)data, numVal);
+    filedata->dataFields.push_back(df);
+    filedata->numDataFields++;
 }
 
 
@@ -313,9 +260,9 @@ QList<QList<PolyLine> > vtk_loader::createPolyLines(){
     if (filedata->fileType != CLAMS)
         return lineList;
 
-    cDataFieldInt *dfLines = static_cast<cDataFieldInt*>(filedata->getDatafield("LINES"));
-    cDataFieldVtkPoint *dfPoints = static_cast<cDataFieldVtkPoint*>(filedata->getDatafield("POINTS"));
-    cDataFieldDouble *dfTime = static_cast<cDataFieldDouble*>(filedata->getDatafield("time"));
+    cDataFieldT<int> *dfLines = static_cast<cDataFieldT<int>*>(filedata->getDatafield("LINES"));
+    cDataFieldT<vtkPoint> *dfPoints = static_cast<cDataFieldT<vtkPoint>*>(filedata->getDatafield("POINTS"));
+    cDataFieldT<double> *dfTime = static_cast<cDataFieldT<double>*>(filedata->getDatafield("time"));
     // ... more datafields needed
 
     int pos = 0;
