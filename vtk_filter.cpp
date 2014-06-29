@@ -18,14 +18,13 @@ vtk_filter::vtk_filter(vtk_loader *loader, QObject *parent) :
     mainLayout->addLayout(header, 14);
 
     int row = 1;
-    for (QList<caDataField*>::Iterator curFieldIt = m_unfiltered->dataFields.begin();
-         curFieldIt != m_unfiltered->dataFields.end(); ++curFieldIt)
+    foreach (caDataField* curField, m_unfiltered->getDatafieldList())
     {
         FilterLayout *newFilterLay = new FilterLayout;
         filterLayouts.push_back(newFilterLay);
 
         newFilterLay->chbEnable = new QCheckBox("");
-        newFilterLay->lbFilterName = new QLabel((*curFieldIt)->getName());
+        newFilterLay->lbFilterName = new QLabel(curField->getName());
 
         newFilterLay->cobNumComp = new QComboBox;
         newFilterLay->cobNumComp->addItem("1");
@@ -74,7 +73,7 @@ vtk_filter::~vtk_filter(){
 }
 
 
-FileData* vtk_filter::getFilteredData(){
+cFileData *vtk_filter::getFilteredData(){
     return m_filtered;
 }
 
@@ -145,13 +144,14 @@ void vtk_filter::applyFilters(){
     // TODO:
     // to prevent errors
     // still need some specialisation for CLAMS data
-    if (m_unfiltered->fileType == CLAMS)
+    if (m_unfiltered->fileType() == CLAMS)
         return;
 
     int dfIdx = 0;
-    m_filtered = new FileData;
-    m_filtered->filename = m_unfiltered->filename;
-    m_filtered->fileType = m_unfiltered->fileType;
+    m_filtered = new cFileData;
+    m_filtered->setFilename(m_unfiltered->filename());
+    m_filtered->setFiletype(m_unfiltered->fileType());
+
     // apply choosen filters and get List of filtered entries
     // the entries are the one who match the filter constraints
     std::set<int> filterList;
@@ -184,14 +184,11 @@ void vtk_filter::applyFilters(){
     }
 
     // get filtered data from unfiltered
-    // ...
 
     // create filtered data
-    for (int i=0; i < m_unfiltered->numDataFields; ++i){
-        m_filtered->dataFields.push_back(
-                    m_unfiltered->getDatafield(i)
-                    ->getDatafieldOfListedIndices(filterList));
-        m_filtered->numDataFields++;
+    foreach (caDataField* df, m_unfiltered->getDatafieldList()){
+        m_filtered->push_back(
+                    df->getDatafieldOfListedIndices(filterList));
     }
 
     m_LoaderPtr->switchFileData(m_filtered);

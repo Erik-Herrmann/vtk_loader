@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QFile>
 #include "datastruct.h"
+#include "cfiledata.h"
+#include "datafield/datafieldincludes.h"
 
 class vtk_loader : public QObject
 {
@@ -13,12 +15,12 @@ public:
     explicit vtk_loader(QObject *parent = 0);
     ~vtk_loader();
 
-    FileData* getFileData();
-    void switchFileData(FileData *newData);
+    cFileData* getFileData();
+    void switchFileData(cFileData *newData);
     QList<QList<PolyLine> > createPolyLines();
 
 private:
-    FileData *filedata;
+    cFileData *filedata;
 
     template <typename T>
     void readDataField(QFile *inFile, QString *line,

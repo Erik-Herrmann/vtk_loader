@@ -1,0 +1,65 @@
+Bekannte Fehler:
+- Filterung von Punkten basiert auf float, alle 3 Koordinaten des Punktes werden gegen den angegebenen float-Wert getestet
+- CLAMS Daten lassen sich nicht filtern, es fehlt eine spezialisierte Filterung der "seed_id" (funktioniert nicht über Indices)
+
+
+Notwendige Verbesserungen:
+- gerenderte Daten müssen in VBOs hinterlegt werden (glBegin/glEnd ist zu langsam)
+- Datenpunkte werden derzeit mit Radius=1 + Höhe(altitude) gezeichnet, und die Weltkugel wird mit Raduis 10 darüber gelegt
+	* Weltkugel muss mit einen passenden Radius gezeichnet werden
+	* die Datenpunkte müssen ausgehend vom Radius der Weltkugel + altitude gezeichnet werden
+	* die altitude der Daten muss auf das Verhältnis Weltkugel<->Größe der Erde skaliert werden
+
+
+Hinweise:
+- "texture"-Ordner in den Ordner der Executable kopieren, damit Grafiken verwendet werden können
+
+
+(wird nach und nach ergänzt ...)
+
+
+
+//-----------------------------------------------------\\
+	<< Benutzung >>
+\\-----------------------------------------------------//
+
+Daten Laden:
+- Über das Menü 'File'->'Load *.vtk' oder
+- per Drag'n'drop
+
+Speichern als Text:
+1. Rechtsklick auf das entsprechende Listenelement
+2. auswählen der Speichermethode
+ - 'save as *.txt' speichert im Pfad und mit dem Namen der geladenen Datei
+ - 'save as ..' speichert mit vorheriger Auswahl des Speicherziels
+
+Filtern der Daten:
+1. Rechtsklick auf das entsprechende Listenelement
+2. auswahl 'apply Filter'
+3. im öffnenden Fenster die zu filternden abhaken
+4. Anzahl der Vergleichswerte wählen
+5. Vergleichsoperatoren wählen
+6. Eingabe des Vergleichswertes
+7. 'apply'
+
+Rendern der Datenpunkte:
+(bisher nur für Daten mit 'POINTS' und 'altitude')
+1. Rechtsklick auf das entsprechende Listenelement
+2. 'add to Drawlist'
+
+Anzeige des Render-Window:
+- über das Menü 'Rendering'->'show()'
+
+Löschen von Daten:
+- 'X' Button am rechten Rand des Listenelements
+- 1. wählen des oder mehrerer zu löschender Listenelemente
+  2. Rechtsklick auf eines der Listenelemente
+  3. 'remove'
+- alle löschen über das Menü 'File'->'clear list'
+
+
+Steuerung im Render-Window:
+- Kamera bewegen auf mit WASD-Tasten (vor, zurück, links, rechts)
+- Kamera drehen mit gedrückter linker Maustaste oder mithilfe der Tasten IJKL
+- Kamera bewegen mit gedrückter rechter Maustaste (rechts, links, hoch, runter)
+- Kamera bewegen mit Mausrad scroll (vor, zurück)

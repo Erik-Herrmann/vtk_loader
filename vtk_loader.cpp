@@ -15,26 +15,26 @@ vtk_loader::~vtk_loader(){
     delete filedata;
 }
 
-FileData* vtk_loader::getFileData(){
+cFileData *vtk_loader::getFileData(){
     return filedata;
 }
 
-void vtk_loader::switchFileData(FileData *newData){
+void vtk_loader::switchFileData(cFileData *newData){
     filedata = newData;
 }
 
 void vtk_loader::detectFiletype(){
     if(filedata)
-        if (filedata->filename != "NOFILE"){
-            if (filedata->filename.contains("mipas", Qt::CaseInsensitive))
-                filedata->fileType = MIPAS;
-            if (filedata->filename.contains("airs", Qt::CaseInsensitive) ||
-                filedata->filename.contains("volcano", Qt::CaseInsensitive))
-                filedata->fileType = AIRS;
-            if (filedata->filename.contains("clams", Qt::CaseInsensitive))
-                filedata->fileType = CLAMS;
-            if (filedata->filename.contains("tropo", Qt::CaseInsensitive))
-                filedata->fileType = TROPO;
+        if (filedata->filename() != "NOFILE"){
+            if (filedata->filename().contains("mipas", Qt::CaseInsensitive))
+                filedata->setFiletype(MIPAS);
+            if (filedata->filename().contains("airs", Qt::CaseInsensitive) ||
+                filedata->filename().contains("volcano", Qt::CaseInsensitive))
+                filedata->setFiletype(AIRS);
+            if (filedata->filename().contains("clams", Qt::CaseInsensitive))
+                filedata->setFiletype(CLAMS);
+            if (filedata->filename().contains("tropo", Qt::CaseInsensitive))
+                filedata->setFiletype(TROPO);
         }
 }
 
@@ -44,11 +44,11 @@ void vtk_loader::loadData(QString filename){
 
     // create File objects
     QFile* inFile = new QFile;
-    filedata = new FileData;
+    filedata = new cFileData;
 
     // set Filenames
     inFile->setFileName(filename);
-    filedata->filename = filename;
+    filedata->setFilename(filename);
     emit setProgressingFilename(filename.right(filename.length()-filename.lastIndexOf('/')-1));
 
     detectFiletype();
@@ -107,8 +107,8 @@ void vtk_loader::loadData(QString filename){
                 cDataFieldT<vtkPoint> *df = new cDataFieldT<vtkPoint>;
                 df->setName(strings.at(0));
                 df->setData(data, values);
-                filedata->dataFields.push_back(df);
-                filedata->numDataFields++;
+                filedata->push_back(df);
+                //filedata->numDataFields++;
             }
             else if ((strings.at(0) == "POLYGONS") || (strings.at(0) == "LINES")){
                 readDataField<int>(inFile, &line, strings.at(1).toInt(), strings.at(2).toInt());
@@ -172,8 +172,8 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
     cDataFieldT<T>* df = new cDataFieldT<T>;
     df->setName(fieldName);
     df->setData((T*)data, numVal);
-    filedata->dataFields.push_back(df);
-    filedata->numDataFields++;
+    filedata->push_back(df);
+    //filedata->numDataFields++;
 }
 
 
@@ -212,7 +212,7 @@ MyTypes vtk_loader::checkType(){
 
 void vtk_loader::saveAsFile(){
     if (filedata){
-        QString outfilename = filedata->filename;
+        QString outfilename = filedata->filename();
         outfilename.chop(3);
         outfilename.append("txt");
         saveAsFile(outfilename);
@@ -232,22 +232,21 @@ void vtk_loader::saveAsFile(QString filename){
         return;
 
     QTextStream out(outFile);
-    int progUpPerField = 100/filedata->dataFields.size();
+    int progUpPerField = 100/filedata->numDataFields();
     emit setProgress("Saving to File ...");
     emit resetProgress();
 
 
-    for (QList<caDataField*>::Iterator it = filedata->dataFields.begin();
-         it != filedata->dataFields.end(); ++it)
+    foreach (caDataField* df, filedata->getDatafieldList())
     {
-        (*it)->writeToOut(out);
+        df->writeToOut(out);
         emit addProgress(progUpPerField);
     }
     outFile->close();
     delete outFile;
 
     // Progess -> 100%
-    emit addProgress(100-(filedata->numDataFields*progUpPerField));
+    emit addProgress(100-(filedata->numDataFields()*progUpPerField));
     emit setProgress(" >> DONE! <<");
 
     // enable Widget Controls
@@ -257,7 +256,7 @@ void vtk_loader::saveAsFile(QString filename){
 
 QList<QList<PolyLine> > vtk_loader::createPolyLines(){
     QList<QList<PolyLine> > lineList;
-    if (filedata->fileType != CLAMS)
+    if (filedata->fileType() != CLAMS)
         return lineList;
 
     cDataFieldT<int> *dfLines = static_cast<cDataFieldT<int>*>(filedata->getDatafield("LINES"));

@@ -51,7 +51,14 @@
     <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
+   <widget class="QMenu" name="menuRendering">
+    <property name="title">
+     <string>Rendering</string>
+    </property>
+    <addaction name="action_show"/>
+   </widget>
    <addaction name="menuLoad"/>
+   <addaction name="menuRendering"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -75,6 +82,11 @@
   <action name="actionClose">
    <property name="text">
     <string>close</string>
+   </property>
+  </action>
+  <action name="action_show">
+   <property name="text">
+    <string>...-&gt; show()</string>
    </property>
   </action>
  </widget>

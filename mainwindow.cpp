@@ -12,9 +12,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setAcceptDrops(true);
+    glWid = new render_widget();
     connect(ui->actionLoad_vtk, SIGNAL(triggered()), this, SLOT(loadVTKFile()));
     connect(ui->actionClear_List, SIGNAL(triggered()), this, SLOT(clearList()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()));
+
+    connect(ui->action_show, SIGNAL(triggered()), glWid, SLOT(show()));
 }
 
 MainWindow::~MainWindow()
@@ -119,10 +122,11 @@ void MainWindow::showCustomContext(QPoint pos){
     QAction* saveTxtAction = myMenu.addAction("save *.txt");
     QAction* saveAsAction = myMenu.addAction("save as ..");
     QAction* createPolyLineAction = 0;
-    if (sendLoader->getFileData()->fileType == CLAMS){
+    if (sendLoader->getFileData()->fileType() == CLAMS){
         myMenu.addSeparator();
         createPolyLineAction = myMenu.addAction("create Polyline");
     }
+    QAction* addToDrawAction = myMenu.addAction("add to Drawlist");
     myMenu.addSeparator();
     QAction* removeAction = myMenu.addAction("remove");
     // ...
@@ -168,6 +172,9 @@ void MainWindow::showCustomContext(QPoint pos){
         else if(selectedAction == createPolyLineAction){
             loaderList.at(widgetList.indexOf(sendWidget))->createPolyLines();
         }
+        else if (selectedAction == addToDrawAction){
+            glWid->addToDrawlist(loaderList.at(widgetList.indexOf(sendWidget))->getFileData());
+        }
     }
     else
     {
@@ -180,11 +187,14 @@ void MainWindow::showCustomContext(QPoint pos){
     if (createPolyLineAction){
         delete createPolyLineAction;
     }
+    delete addToDrawAction;
     delete removeAction;
 }
 
 void MainWindow::saveAsFile(int loaderId){
     QString saveFilename = QFileDialog::getSaveFileName(this, "Save File As ...", "/");
+    if (saveFilename.isEmpty())
+        return;
     QMetaObject::invokeMethod(loaderList.at(loaderId), "saveAsFile", Q_ARG(QString, saveFilename));
 }
 
@@ -193,6 +203,9 @@ void MainWindow::deleteLoader(loader_widget* widgetPtr){
 
     ui->listWidget->removeItemWidget(ui->listWidget->item(i));
     delete ui->listWidget->item(i);
+
+    // remove from drawList (QGLWidget)
+    glWid->removeFromDrawlist(loaderList.at(i)->getFileData());
 
     widgetList.at(i)->deleteLater();
     loaderList.at(i)->deleteLater();

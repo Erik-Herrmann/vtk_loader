@@ -33,6 +33,9 @@ template<>
 void cDataFieldT<float>::writeToOut(QTextStream &out);
 
 template<>
+void cDataFieldT<int>::writeToOut(QTextStream &out);
+
+template<>
 void cDataFieldT<vtkPoint>::writeToOut(QTextStream &out);
 
 template<>

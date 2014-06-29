@@ -26,7 +26,10 @@ SOURCES += main.cpp\
     datafield/cdatafielddouble.cpp \
     datafield/cdatafielduchar.cpp \
 	datafield/cdatafieldvtkpoint.cpp \
-    datafield/cdatafieldt.cpp
+    datafield/cdatafieldt.cpp \
+    render_widget.cpp \
+    ccamera.cpp \
+    cfiledata.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -44,11 +47,19 @@ HEADERS  += mainwindow.h \
     datafield/cdatafielduchar.h \
     vtkpoint.h \
 	datafield/cdatafieldvtkpoint.h \
-    datafield/cdatafieldt.h
+    datafield/cdatafieldt.h \
+    render_widget.h \
+    ccamera.h \
+    cfiledata.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui
 
+QT           += opengl
 
-#INCLUDEPATH += tek
+
 INCLUDEPATH += C:/boostLib
+
+OTHER_FILES += \
+	texture/earth_8k.jpg \
+	texture/earthmap1k.png

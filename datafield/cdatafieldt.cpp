@@ -41,6 +41,30 @@ void cDataFieldT<float>::writeToOut(QTextStream &out){
 }
 
 template<>
+void cDataFieldT<int>::writeToOut(QTextStream &out){
+    if (m_NumEntries){
+        out << m_DataName << " " << m_NumEntries << "\n";
+        if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
+            int pos = 0;
+            while(pos < m_NumEntries){
+                int values = m_Data[pos++];
+                out << values;
+                for (int i=0; i < values; ++i){
+                    out << " " << m_Data[pos++];
+                }
+                out << "\n";
+            }
+        }
+        else{
+            for (int i=0; i < m_NumEntries; ++i){
+                out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+            }
+        }
+    }
+}
+
+
+template<>
 void cDataFieldT<vtkPoint>::writeToOut(QTextStream &out){
     if (m_NumEntries){
         out << m_DataName << " " << m_NumEntries << "\n";
