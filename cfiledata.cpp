@@ -1,6 +1,7 @@
 #include "cfiledata.h"
 #include "datafield/cdatafieldt.h"
 #include <QtOpenGL>
+#include <GL/glu.h>
 
 cFileData::cFileData()
     : m_Filename("NOFILE"), m_FileType(UNKNOWN),
@@ -67,18 +68,30 @@ void cFileData::drawPoints(){
             static_cast<cDataFieldT<float>*>(getDatafield("altitude"));
     if (!df_a)
         return;
+    cDataFieldT<float>* df_d =
+            static_cast<cDataFieldT<float>*>(getDatafield("detection"));
+    if (!df_d)
+        return;
 
-    glPushMatrix();
-    glPointSize(2);
-    glBegin(GL_POINTS);
+    GLUquadricObj *gSphere = gluNewQuadric();
+    gluQuadricNormals(gSphere, GLU_SMOOTH);
+    float mat_emission_detection4[4] = {0.8f, 0.2f, 0.2f, 0.0f};
+    float mat_emission[4] = {0.2f, 0.2f, 0.8f, 0.0f};
+    glEnable(GL_LIGHTING);
     for (int i=0; i < df_p->numEntries(); ++i){
         vtkPoint p = df_p->getValueAt(i);
         float a = df_a->getValueAt(i);
-        glVertex3f((a)*sin(p.x)*cos(p.y),
-                   (a)*sin(p.x)*sin(p.y),
-                   (a)*cos(p.x));
+        if (df_d->getValueAt(i) == 4)
+            glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission_detection4);
+        else
+            glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+        glPushMatrix();
+        glTranslatef((a)*sin(p.x)*cos(p.y),
+                     (a)*sin(p.x)*sin(p.y),
+                     (a)*cos(p.x));
+        gluSphere(gSphere, 0.02f, 6, 6);
+        glPopMatrix();
     }
-    glEnd();
-    glPopMatrix();
-    glPointSize(1);
+    glEnable(GL_LIGHTING);
+    gluDeleteQuadric(gSphere);
 }
