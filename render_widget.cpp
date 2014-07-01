@@ -1,11 +1,10 @@
 #include "render_widget.h"
 
 #include <QtGui>
-#include <QtOpenGL>
+//#include <QtOpenGL>
 #include <GL/glu.h>
 #include <QPixmap>
 #include <QImage>
-
 #include <math.h>
 
 #ifndef GL_MULTISAMPLE
@@ -36,11 +35,23 @@ QSize render_widget::sizeHint() const
 
 void render_widget::addToDrawlist(cFileData *data){
     drawList.push_back(data);
+
+//    float *pointData = 0;
+//    int size = data->getPointData(pointData);
+//    cDrawObject<float> *obj = new cDrawObject<float>(this->context()->functions(),
+//                                                     pointData, size, GL_POINTS);
+//    filedataDrawindexMap[data] = drawList.size();
+//    drawList.push_back(obj);
+//    delete pointData;
+
     update();
 }
 
 void render_widget::removeFromDrawlist(cFileData *data){
     drawList.removeAll(data);
+
+//    drawList.removeAt(filedataDrawindexMap[data]);
+
     update();
 }
 
@@ -72,7 +83,7 @@ void render_widget::initializeGL()
     // load world texture to GPU-Buffer
     loadTextures();
 
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     //glEnable(GL_LIGHTING);
@@ -145,8 +156,11 @@ void render_widget::paintGL()
     // draw Datapoints
     glColor3f(0.0, 0.0, 0.8);
     foreach(cFileData* file, drawList){
-        file->drawPoints();
+        file->drawPoints(10);
     }
+//    foreach (cDrawObject<float>* obj, drawList){
+//        obj->drawObject();
+//    }
 
     glFlush();
 }

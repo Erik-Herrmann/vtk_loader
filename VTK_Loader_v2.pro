@@ -29,7 +29,7 @@ SOURCES += main.cpp\
     datafield/cdatafieldt.cpp \
     render_widget.cpp \
     ccamera.cpp \
-    cfiledata.cpp
+	cfiledata.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -50,7 +50,8 @@ HEADERS  += mainwindow.h \
     datafield/cdatafieldt.h \
     render_widget.h \
     ccamera.h \
-    cfiledata.h
+    cfiledata.h \
+    cdrawobject.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui

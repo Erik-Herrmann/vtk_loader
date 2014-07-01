@@ -22,7 +22,8 @@ public:
     void setFiletype(FileTypes type);
     void push_back(caDataField *df);
 
-    void drawPoints();
+    void drawPoints(float radius);
+    int getPointData(float *data);
 
 private:
     QString m_Filename;
