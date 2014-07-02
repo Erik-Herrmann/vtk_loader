@@ -1,6 +1,7 @@
 #include "vtk_filter.h"
 #include <QSet>
 #include <QtAlgorithms>
+#include <QMessageBox>
 
 vtk_filter::vtk_filter(vtk_loader *loader, QObject *parent) :
     QObject(parent),
@@ -148,9 +149,6 @@ void vtk_filter::applyFilters(){
         return;
 
     int dfIdx = 0;
-    m_filtered = new cFileData;
-    m_filtered->setFilename(m_unfiltered->filename());
-    m_filtered->setFiletype(m_unfiltered->fileType());
 
     // apply choosen filters and get List of filtered entries
     // the entries are the one who match the filter constraints
@@ -161,6 +159,10 @@ void vtk_filter::applyFilters(){
         if (filter->chbEnable->isChecked()){
             caDataField *df = m_unfiltered->getDatafield(dfIdx);
             for (int i=0; i < filter->cobNumComp->currentIndex()+1; ++i){
+                // continue if no filter value was insert
+                if (filter->compairs.at(i)->ledCompValue->text().isEmpty())
+                    continue;
+
                 std::set<int> curFilter;
                 df->filterData(&curFilter,
                                filter->compairs.at(i)->cobOperator->currentIndex(),
@@ -185,10 +187,22 @@ void vtk_filter::applyFilters(){
 
     // get filtered data from unfiltered
 
+    if (filterList.empty()){
+        QMessageBox::warning(0, "Filter Error",
+                             QString("The filtering is canceled.\nAfter filtering, no more data will remain."),
+                             QMessageBox::Ok, QMessageBox::NoButton);
+        return;
+    }
+
+    m_filtered = new cFileData;
+    m_filtered->setFilename(m_unfiltered->filename());
+    m_filtered->setFiletype(m_unfiltered->fileType());
+
     // create filtered data
     foreach (caDataField* df, m_unfiltered->getDatafieldList()){
-        m_filtered->push_back(
-                    df->getDatafieldOfListedIndices(filterList));
+        caDataField *caDf = df->getDatafieldOfListedIndices(filterList);
+        if(caDf)
+            m_filtered->push_back(caDf);
     }
 
     m_LoaderPtr->switchFileData(m_filtered);
