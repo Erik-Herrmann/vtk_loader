@@ -189,6 +189,14 @@ void render_widget::paintGL()
 //    glLineWidth(1);
 //----------------------------------------
 
+//    DRAW: with indexed array (+/-)
+//----------------------------------------
+//    glPointSize(4);
+//    foreach (cDrawObject<float> *obj, drawList){
+//        obj->drawIndexObject(&indices);
+//    }
+//    glPointSize(1);
+//----------------------------------------
 
 //     TESTING SPHERE COORDINATES
 //--------------------------------------------------------
@@ -294,6 +302,13 @@ void render_widget::keyPressEvent(QKeyEvent *event){
             showFullScreen();
             update();
         }
+    case Qt::Key_Plus:
+        for (int i=0; i < 13; i++)
+            indices.push_back(indices.size());
+        break;
+    case Qt::Key_Minus:
+        for (int i=0; i < 13; i++)
+            indices.pop_back();
         break;
     default:
         break;

@@ -21,6 +21,7 @@ public:
     void setType(GLenum target);
 
     void drawObject();
+    void drawIndexObject(std::vector<unsigned int> *indices);
 
 private:
     QGLFunctions *m_glFunc;

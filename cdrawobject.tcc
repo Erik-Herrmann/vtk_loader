@@ -153,3 +153,23 @@ void cDrawObject<T>::drawObject(){
 }
 
 
+template<typename T>
+void cDrawObject<T>::drawIndexObject(std::vector<unsigned int> *indices){
+    m_vao->bind();
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    if (m_ColorPtr){
+        glEnableClientState(GL_COLOR_ARRAY);
+    }
+
+    glDrawElements(m_Type, indices->size(), GL_UNSIGNED_INT, indices->data());
+
+    if (m_ColorPtr){
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    m_vao->release();
+}
+
+

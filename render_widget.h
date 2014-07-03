@@ -44,6 +44,7 @@ private:
     QPoint lastPos;
     GLuint texture;
 
+    std::vector<unsigned int> indices;
 //    QList<cFileData*> drawList;
 //-----------------------
     QList<cDrawObject<float>*> drawList;
