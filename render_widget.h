@@ -42,14 +42,13 @@ private:
     int yRot;
     int zRot;
     QPoint lastPos;
-    QColor qtGreen;
-    QColor qtPurple;
     GLuint texture;
 
-    GLubyte checkImage[checkImageHeight][checkImageWidth][4];
-    QList<cFileData*> drawList;
-//    QList<cDrawObject<float>*> drawList;
-//    QMap<cFileData*, int> filedataDrawindexMap;
+//    QList<cFileData*> drawList;
+//-----------------------
+    QList<cDrawObject<float>*> drawList;
+    QMap<cFileData*, int> filedataDrawindexMap;
+//-----------------------
 
     cCamera m_Camera;
     QImage tex;

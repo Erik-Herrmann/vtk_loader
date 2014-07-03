@@ -3,6 +3,16 @@
 
 #include "datafield/cadatafield.h"
 #include "datastruct.h"
+#include "globaldefines.h"
+#include <QtOpenGL>
+#include <GL/glu.h>
+
+//-------------------------------------------------------
+//  Conversion londitude, latitude, altitude -> x, y, z
+//    x = alti*sin(THETA(i))*sin(PHI(k))
+//    y = alti*cos(THETA(i))
+//    z = alti*sin(THETA(i))*cos(PHI(k))
+//-------------------------------------------------------
 
 class cFileData
 {
@@ -23,7 +33,9 @@ public:
     void push_back(caDataField *df);
 
     void drawPoints(float radius);
-    int getPointData(float *data);
+    int getPointData(std::vector<float> *vertex);
+    int getColorData(std::vector<GLubyte> *color);
+    int getPointColorData(std::vector<float> *vertex, std::vector<GLubyte> *color);
 
 private:
     QString m_Filename;

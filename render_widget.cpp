@@ -1,11 +1,11 @@
 #include "render_widget.h"
 
 #include <QtGui>
-//#include <QtOpenGL>
 #include <GL/glu.h>
 #include <QPixmap>
 #include <QImage>
 #include <math.h>
+#include "globaldefines.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -15,7 +15,7 @@ render_widget::render_widget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer ), parent)
 {
     setWindowTitle("Render Widget");
-    m_Camera.setPosition(QVector3D(0.0, 0.0, 20.0));
+    m_Camera.setPosition(QVector3D(0.0, 0.0, WORLD_SPHERE_RADIUS+10));
     texture = 0;
 }
 
@@ -34,23 +34,33 @@ QSize render_widget::sizeHint() const
 }
 
 void render_widget::addToDrawlist(cFileData *data){
-    drawList.push_back(data);
+//    drawList.push_back(data);
 
-//    float *pointData = 0;
-//    int size = data->getPointData(pointData);
-//    cDrawObject<float> *obj = new cDrawObject<float>(this->context()->functions(),
-//                                                     pointData, size, GL_POINTS);
-//    filedataDrawindexMap[data] = drawList.size();
-//    drawList.push_back(obj);
-//    delete pointData;
 
+//----------------------------
+    std::vector<float> *pointData = new std::vector<float>;
+    std::vector<GLubyte> *colors = new std::vector<GLubyte>;
+    int size = data->getPointColorData(pointData, colors);
+    cDrawObject<float> *obj = new cDrawObject<float>(this->context()->functions(),
+                                                     pointData->data(), colors->data(),
+                                                     size, GL_POINTS);
+    filedataDrawindexMap[data] = drawList.size();
+    drawList.push_back(obj);
+//----------------------------
+
+    delete pointData;
+    delete colors;
     update();
 }
 
 void render_widget::removeFromDrawlist(cFileData *data){
-    drawList.removeAll(data);
+//    drawList.removeAll(data);
 
-//    drawList.removeAt(filedataDrawindexMap[data]);
+//------------------------
+    int id = filedataDrawindexMap[data];
+    delete drawList.at(id);
+    drawList.removeAt(id);
+//------------------------
 
     update();
 }
@@ -78,6 +88,8 @@ void render_widget::loadTextures(){
 
 void render_widget::initializeGL()
 {
+    makeCurrent();
+
     glClearColor (0.0, 0.0, 0.0, 0.0);
 
     // load world texture to GPU-Buffer
@@ -128,6 +140,7 @@ void drawAxis(){
 void render_widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // draw coordinate axis
     glLoadIdentity();
     drawAxis();
@@ -144,23 +157,53 @@ void render_widget::paintGL()
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // create world sphere
-    GLUquadricObj *gSphere = gluNewQuadric();
-    gluQuadricTexture(gSphere, GL_TRUE);
-    gluQuadricNormals(gSphere, GLU_SMOOTH);
-    gluSphere(gSphere, 10, 50, 50);
+    glPushMatrix();
+        glRotatef(-90.0, 1.0, 0.0, 0.0);
+        GLUquadricObj *gSphere = gluNewQuadric();
+        gluQuadricTexture(gSphere, GL_TRUE);
+        gluQuadricNormals(gSphere, GLU_SMOOTH);
+        gluSphere(gSphere, WORLD_SPHERE_RADIUS, 50, 50);
+        gluDeleteQuadric(gSphere);
+    glPopMatrix();
 
-    gluDeleteQuadric(gSphere);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
 
-    // draw Datapoints
-    glColor3f(0.0, 0.0, 0.8);
-    foreach(cFileData* file, drawList){
-        file->drawPoints(10);
-    }
-//    foreach (cDrawObject<float>* obj, drawList){
-//        obj->drawObject();
+
+//     DRAW: with cFileData-function
+//----------------------------------------
+//    foreach(cFileData* file, drawList){
+//        file->drawPoints(WORLD_SPHERE_RADIUS);
 //    }
+//----------------------------------------
+
+
+//     DRAW: with cDrawObject (glBuffer)
+//----------------------------------------
+//    glLineWidth(3);
+//    glPointSize(4);
+    foreach (cDrawObject<float>* obj, drawList){
+        obj->drawObject();
+    }
+//    glPointSize(1);
+//    glLineWidth(1);
+//----------------------------------------
+
+
+//     TESTING SPHERE COORDINATES
+//--------------------------------------------------------
+//    glLineWidth(2);
+//    for (int k=0; k < 30; k+=10){
+//        glBegin(GL_LINE_STRIP);
+//        for (int i=-90; i < 90; ++i){
+//            glVertex3f(11*sin(THETA(i))*sin(PHI(k)),
+//                       11*cos(THETA(i)),
+//                       11*sin(THETA(i))*cos(PHI(k)));
+//        }
+//        glEnd();
+//    }
+//    glLineWidth(1);
+//--------------------------------------------------------
 
     glFlush();
 }
@@ -173,7 +216,7 @@ void render_widget::resizeGL(int width, int height)
     glLoadIdentity();
 
     float aspect = (float)width/(float)height;
-    gluPerspective(60.0, aspect, 0.2, 60.0);
+    gluPerspective(45.0, aspect, 0.2, 100.0);
 
     glMatrixMode(GL_MODELVIEW);
 }

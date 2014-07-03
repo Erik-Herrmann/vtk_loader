@@ -51,7 +51,8 @@ HEADERS  += mainwindow.h \
     render_widget.h \
     ccamera.h \
     cfiledata.h \
-    cdrawobject.h
+    cdrawobject.h \
+    globaldefines.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui
@@ -63,4 +64,6 @@ INCLUDEPATH += C:/boostLib
 
 OTHER_FILES += \
 	texture/earth_8k.jpg \
-	texture/earthmap1k.png
+	texture/earthmap1k.png \
+    shader/pointShader.vert \
+    shader/pointShader.frag

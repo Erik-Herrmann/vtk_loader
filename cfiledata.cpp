@@ -1,11 +1,5 @@
 #include "cfiledata.h"
 #include "datafield/cdatafieldt.h"
-#include <QtOpenGL>
-#include <GL/glu.h>
-
-
-
-#define EARTH_RADIUS 6371.000
 
 cFileData::cFileData()
     : m_Filename("NOFILE"), m_FileType(UNKNOWN),
@@ -72,8 +66,8 @@ void cFileData::drawPoints(float radius){
             static_cast<cDataFieldT<float>*>(getDatafield("altitude"));
     if (!df_a)
         return;
-    cDataFieldT<float>* df_d =
-            static_cast<cDataFieldT<float>*>(getDatafield("detection"));
+    cDataFieldT<unsigned char>* df_d =
+            static_cast<cDataFieldT<unsigned char>*>(getDatafield("detection"));
     if (!df_d)
         return;
 
@@ -87,14 +81,14 @@ void cFileData::drawPoints(float radius){
         vtkPoint p = df_p->getValueAt(i);
         float a = df_a->getValueAt(i)*scaleFac;
         if (df_d->getValueAt(i) == 4)
-            glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission_detection4);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_emission_detection4);
         else
-            glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_emission);
         glPushMatrix();
-        glTranslatef((radius+a)*sin(p.x)*cos(p.y),
-                     (radius+a)*sin(p.x)*sin(p.y),
-                     (radius+a)*cos(p.x));
-        gluSphere(gSphere, 0.02f, 6, 6);
+        glTranslatef((radius+a)*sin(THETA(p.y))*sin(PHI(p.x)),
+                     (radius+a)*cos(THETA(p.y)),
+                     (radius+a)*sin(THETA(p.y))*cos(PHI(p.x)));
+        gluSphere(gSphere, 0.1f, 6, 6);
         glPopMatrix();
     }
     glEnable(GL_LIGHTING);
@@ -102,7 +96,7 @@ void cFileData::drawPoints(float radius){
 }
 
 
-int cFileData::getPointData(float *data){
+int cFileData::getPointData(std::vector<float> *vertex){
     cDataFieldT<vtkPoint>* df_p =
             static_cast<cDataFieldT<vtkPoint>*>(getDatafield("POINTS"));
     if (!df_p)
@@ -111,17 +105,105 @@ int cFileData::getPointData(float *data){
             static_cast<cDataFieldT<float>*>(getDatafield("altitude"));
     if (!df_a)
         return 0;
-
-    int radius = 10;
-    data = new float[df_p->numEntries()*3];
-    float scaleFac = (float)radius/EARTH_RADIUS;
     int pos = 0;
+    int radius = 10;
+    vertex->reserve(df_p->numEntries()*3);
+    float scaleFac = 5.0*(float)WORLD_SPHERE_RADIUS/EARTH_RADIUS;
     for (int i=0; i < df_p->numEntries(); ++i){
         vtkPoint p = df_p->getValueAt(i);
         float a = df_a->getValueAt(i)*scaleFac;
-        data[pos++] = (radius+a)*sin(p.x)*cos(p.y);
-        data[pos++] = (radius+a)*sin(p.x)*sin(p.y);
-        data[pos++] = (radius+a)*cos(p.x);
+        vertex->push_back((radius+a)*sin(THETA(p.y))*sin(PHI(p.x)));
+        vertex->push_back((radius+a)*cos(THETA(p.y)));
+        vertex->push_back((radius+a)*sin(THETA(p.y))*cos(PHI(p.x)));
+        pos+=3;
+    }
+    return pos;
+}
+
+int cFileData::getColorData(std::vector<GLubyte> *color){
+    cDataFieldT<unsigned char>* df_d =
+            static_cast<cDataFieldT<unsigned char>*>(getDatafield("detection"));
+    if (!df_d)
+        return 0;
+
+    int pos = 0;
+    color->reserve(df_d->numEntries()*3);
+    for (int i=0; i < df_d->numEntries(); ++i){
+        switch(df_d->getValueAt(i)){
+        case 0:
+            color->push_back(GLubyte(255));
+            color->push_back(GLubyte(255));
+            color->push_back(GLubyte(178));
+            break;
+        case 1:
+            color->push_back(GLubyte(254));
+            color->push_back(GLubyte(204));
+            color->push_back(GLubyte(92));
+            break;
+        case 2:
+            color->push_back(GLubyte(253));
+            color->push_back(GLubyte(141));
+            color->push_back(GLubyte(60));
+            break;
+        case 4:
+            color->push_back(GLubyte(227));
+            color->push_back(GLubyte(26));
+            color->push_back(GLubyte(28));
+            break;
+        }
+        pos+=3;
+    }
+    return pos;
+}
+
+
+int cFileData::getPointColorData(std::vector<float> *vertex, std::vector<GLubyte> *color){
+    cDataFieldT<vtkPoint>* df_p =
+            static_cast<cDataFieldT<vtkPoint>*>(getDatafield("POINTS"));
+    if (!df_p)
+        return 0;
+    cDataFieldT<float>* df_a =
+            static_cast<cDataFieldT<float>*>(getDatafield("altitude"));
+    if (!df_a)
+        return 0;
+    cDataFieldT<unsigned char>* df_d =
+            static_cast<cDataFieldT<unsigned char>*>(getDatafield("detection"));
+    if (!df_d)
+        return 0;
+
+    int pos = 0;
+    int radius = 10;
+    vertex->reserve(df_p->numEntries()*3);
+    float scaleFac = 5.0*(float)WORLD_SPHERE_RADIUS/EARTH_RADIUS;
+    for (int i=0; i < df_p->numEntries(); ++i){
+        switch(df_d->getValueAt(i)){
+        case 0:
+            color->push_back(GLubyte(255));
+            color->push_back(GLubyte(255));
+            color->push_back(GLubyte(178));
+            break;
+        case 1:
+            color->push_back(GLubyte(254));
+            color->push_back(GLubyte(204));
+            color->push_back(GLubyte(92));
+            break;
+        case 2:
+            color->push_back(GLubyte(253));
+            color->push_back(GLubyte(141));
+            color->push_back(GLubyte(60));
+            break;
+        case 4:
+            color->push_back(GLubyte(227));
+            color->push_back(GLubyte(26));
+            color->push_back(GLubyte(28));
+            break;
+        }
+        vtkPoint p = df_p->getValueAt(i);
+        float a = df_a->getValueAt(i)*scaleFac;
+        vertex->push_back((radius+a)*sin(THETA(p.y))*sin(PHI(p.x)));
+        vertex->push_back((radius+a)*cos(THETA(p.y)));
+        vertex->push_back((radius+a)*sin(THETA(p.y))*cos(PHI(p.x)));
+        pos+=3;
     }
     return pos;
 }

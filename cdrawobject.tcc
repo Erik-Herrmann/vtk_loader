@@ -1,38 +1,79 @@
 #include "cdrawobject.h"
 #include "QtOpenGL"
+#include <QOpenGLShaderProgram>
 
 template<typename T>
 cDrawObject<T>::cDrawObject(QGLFunctions *func)
     : m_glFunc(func),
-      m_Type(GL_POINTS), m_ID(0),
-      m_Buffer(0), m_size(0), m_vao(new QOpenGLVertexArrayObject(this))
+      m_Type(GL_POINTS), m_VertexBuffer(0),
+      m_vao(0), m_shaderProgram(0),
+      m_VertexPtr(0), m_ColorPtr(0), m_size(0)
 {
+    m_vao = new QOpenGLVertexArrayObject();
+//    m_shaderProgram = new QOpenGLShaderProgram();
     m_vao->create();
 }
 
 template<typename T>
-cDrawObject<T>::cDrawObject(QGLFunctions *func, T *data, size_t size, GLenum type)
+cDrawObject<T>::cDrawObject(QGLFunctions *func, T *vertex, size_t size, GLenum type)
     : m_glFunc(func),
-      m_Type(type), m_ID(0),
-      m_Buffer(data), m_size(size)
+      m_Type(type), m_VertexBuffer(0),
+      m_vao(0), m_shaderProgram(0),
+      m_VertexPtr(vertex), m_ColorPtr(0), m_size(size)
 {
+    m_vao = new QOpenGLVertexArrayObject();
+//    m_shaderProgram = new QOpenGLShaderProgram();
+    m_vao->create();
+    createVBO();
+}
+
+template<typename T>
+cDrawObject<T>::cDrawObject(QGLFunctions *func, T *vertex, GLubyte *color, size_t size, GLenum type)
+    : m_glFunc(func),
+      m_Type(type), m_VertexBuffer(0),
+      m_vao(0), m_shaderProgram(0),
+      m_VertexPtr(vertex), m_ColorPtr(color), m_size(size)
+{
+    m_vao = new QOpenGLVertexArrayObject();
+//    m_shaderProgram = new QOpenGLShaderProgram();
+    m_vao->create();
     createVBO();
 }
 
 template<typename T>
 cDrawObject<T>::~cDrawObject(){
+    m_VertexPtr = 0;
+    m_ColorPtr = 0;
+    m_VertexBuffer->release();
+    m_VertexBuffer->destroy();
+
+//    m_shaderProgram->removeAllShaders();
+//    m_shaderProgram->deleteLater();
+
+    m_vao->destroy();
+    m_vao->deleteLater();
 }
 
 template<typename T>
-void cDrawObject<T>::setBuffer(T *data, size_t size){
-    m_Buffer = data;
+void cDrawObject<T>::setVertices(T *vertices, size_t size){
+    m_VertexPtr = vertices;
     m_size = size;
     createVBO();
 }
 
 template<typename T>
-T *cDrawObject<T>::getBuffer(){
-    return m_Buffer;
+T *cDrawObject<T>::getVertices(){
+    return m_VertexPtr;
+}
+
+template<typename T>
+void cDrawObject<T>::setColor(GLubyte *color){
+    m_ColorPtr = color;
+}
+
+template<typename T>
+GLubyte *cDrawObject<T>::getColor(){
+    return m_ColorPtr;
 }
 
 template<typename T>
@@ -44,30 +85,71 @@ template<typename T>
 void cDrawObject<T>::createVBO(){
     m_vao->bind();
 
-    m_positions = new QGLBuffer;
-    m_positions->create();
-    m_positions->setUsagePattern(QGLBuffer::StreamDraw);
-    m_positions->bind();
-    m_positions->allocate(m_Buffer, m_size*sizeof(float));
+    //loadShaders();
 
-//    m_glFunc->glGenBuffers(1, &m_ID);
-//    m_glFunc->glBindBuffer(GL_ARRAY_BUFFER, m_ID);
-//    m_glFunc->glBufferData(GL_ARRAY_BUFFER, m_size, 0, GL_STATIC_DRAW);
-//    m_glFunc->glBindBuffer(GL_ARRAY_BUFFER, m_ID);
-//    m_glFunc->glBufferData(GL_ARRAY_BUFFER, m_size, m_Buffer, GL_STATIC_DRAW);
+    m_VertexBuffer = new QGLBuffer;
+    m_VertexBuffer->create();
+    m_VertexBuffer->setUsagePattern(QGLBuffer::StaticDraw);
+    m_VertexBuffer->bind();
+    m_VertexBuffer->allocate(m_VertexPtr, m_size*sizeof(float));
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+
+    if (m_ColorPtr){
+        m_ColorBuffer = new QGLBuffer;
+        m_ColorBuffer->create();
+        m_ColorBuffer->setUsagePattern(QGLBuffer::StaticDraw);
+        m_ColorBuffer->bind();
+        m_ColorBuffer->allocate(m_ColorPtr, m_size*sizeof(GLubyte));
+        glColorPointer(3, GL_UNSIGNED_BYTE, 0, 0);
+    }
+
+//    m_shaderProgram->link();
+//    m_shaderProgram->bind();
+
+    m_vao->release();
+
+}
+
+template<typename T>
+void cDrawObject<T>::loadShaders(){
+    bool result = true;
+    result = m_shaderProgram->addShaderFromSourceFile(
+                                    QOpenGLShader::Vertex,
+                                    QCoreApplication::applicationDirPath() +
+                                    "/shader/pointShader.vert");
+
+    if (!result)
+        printf("Couldn't load ShaderProgram: Vertex\n");
+
+    result = m_shaderProgram->addShaderFromSourceFile(
+                                    QOpenGLShader::Fragment,
+                                    QCoreApplication::applicationDirPath() +
+                                    "/shader/pointShader.frag");
+    if (!result)
+        printf("Couldn't load ShaderProgram: Fragment\n");
 }
 
 template<typename T>
 void cDrawObject<T>::drawObject(){
-//    m_glFunc->glBindBuffer(GL_ARRAY_BUFFER, m_ID);
-//    glEnableClientState(GL_VERTEX_ARRAY);
-//    glVertexPointer(3, GL_FLOAT, 0, 0);
-//    glDrawArrays(m_Type, 0, m_size);
-//    glDisableClientState(GL_VERTEX_ARRAY);
-//    m_glFunc->glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     m_vao->bind();
-    glDrawArrays(m_Type, 0, m_size);
+
+//    int posAttrib = m_shaderProgram->attributeLocation("position");
+//    m_shaderProgram->setAttributeBuffer(posAttrib, GL_FLOAT, 0, 3 );
+//    m_shaderProgram->enableAttributeArray(posAttrib);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    if (m_ColorPtr){
+        glEnableClientState(GL_COLOR_ARRAY);
+    }
+
+    glDrawArrays(m_Type, 0, m_size/3);
+
+    if (m_ColorPtr){
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    m_vao->release();
 }
 
 

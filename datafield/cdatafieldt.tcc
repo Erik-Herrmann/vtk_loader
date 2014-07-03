@@ -1,6 +1,6 @@
-//#include "cdatafieldt.h"
+#include "cdatafieldt.h"
 #include "helpers.h"
-#include <QSet>
+#include <set>
 
 template<typename T>
 cDataFieldT<T>::cDataFieldT()
@@ -92,7 +92,7 @@ void cDataFieldT<T>::filterData(std::set<int> *filterList, int opId, QString val
 
 template<typename T>
 caDataField* cDataFieldT<T>::getDatafieldOfListedIndices(std::set<int> &indices){
-    if (m_NumEntries){
+    if (m_NumEntries && !indices.empty()){
         T *newData = new T[indices.size()];
         int pos = 0;
         for (int i : indices) {

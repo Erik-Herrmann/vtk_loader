@@ -9,11 +9,14 @@ class cDrawObject
 {
 public:
     cDrawObject(QGLFunctions *func);
-    cDrawObject(QGLFunctions *func, T *data, size_t size, GLenum type=GL_POINTS);
+    cDrawObject(QGLFunctions *func, T *vertex, size_t size, GLenum type=GL_POINTS);
+    cDrawObject(QGLFunctions *func, T *vertex, GLubyte *color, size_t size, GLenum type=GL_POINTS);
     ~cDrawObject();
 
-    void setBuffer(T *data, size_t size);
-    T* getBuffer();
+    void setVertices(T *vertices, size_t size);
+    T* getVertices();
+    void setColor(GLubyte *color);
+    GLubyte* getColor();
 
     void setType(GLenum target);
 
@@ -22,15 +25,19 @@ public:
 private:
     QGLFunctions *m_glFunc;
     GLenum m_Type;
-    GLuint m_ID;
 
-    QGLBuffer *m_positions;
+    QGLBuffer *m_VertexBuffer;
+    QGLBuffer *m_ColorBuffer;
     QOpenGLVertexArrayObject *m_vao;
 
-    T *m_Buffer;
+    QOpenGLShaderProgram *m_shaderProgram;
+
+    T *m_VertexPtr;
+    GLubyte *m_ColorPtr;
     unsigned int m_size;
 
     void createVBO();
+    void loadShaders();
 
 };
 
