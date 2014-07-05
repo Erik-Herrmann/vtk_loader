@@ -54,7 +54,7 @@ vtk_filter::vtk_filter(vtk_loader *loader, QObject *parent) :
     }
 
     applyButton = new QPushButton("apply");
-    connect(applyButton, SIGNAL(clicked()), this, SLOT(applyFilters()));
+
     mainLayout->addWidget(applyButton);
 
     mainFrame->setLayout(mainLayout);
@@ -135,7 +135,8 @@ void vtk_filter::createNewCompLayout(FilterLayout *filterLay){
     filterLay->compLayout->addLayout(newValComp->myLayout);
 }
 
-void vtk_filter::showFilters(){
+void vtk_filter::filteringData(){
+    connect(applyButton, SIGNAL(clicked()), this, SLOT(applyFilters()));
     mainFrame->show();
 }
 
@@ -207,6 +208,8 @@ void vtk_filter::applyFilters(){
 
     m_LoaderPtr->switchFileData(m_filtered);
     delete m_unfiltered;
+
+    disconnect(applyButton, SIGNAL(clicked()), this, SLOT(applyFilters()));
 
     this->deleteLater();
 }

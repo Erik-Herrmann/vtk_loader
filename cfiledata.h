@@ -33,6 +33,7 @@ public:
     void push_back(caDataField *df);
 
     void drawPoints(float radius);
+    GLuint getDisplayList();
     int getPointData(std::vector<float> *vertex);
     int getColorData(std::vector<GLubyte> *color);
     int getPointColorData(std::vector<float> *vertex, std::vector<GLubyte> *color);

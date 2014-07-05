@@ -11,12 +11,17 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+
+
 render_widget::render_widget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer ), parent)
 {
     setWindowTitle("Render Widget");
     m_Camera.setPosition(QVector3D(0.0, 0.0, WORLD_SPHERE_RADIUS+10));
     texture = 0;
+#if DRAWMODE_SPHERES_DISPLAYLIST
+    disp = 0;
+#endif
 }
 
 render_widget::~render_widget()
@@ -34,32 +39,44 @@ QSize render_widget::sizeHint() const
 }
 
 void render_widget::addToDrawlist(cFileData *data){
-//    drawList.push_back(data);
-
-
+#if DRAWMODE_SPHERES
+    drawList.push_back(data);
+#endif
 //----------------------------
+#if (DRAWMODE_BUFFER || DRAWMODE_INDEXED_BUFFER)
     std::vector<float> *pointData = new std::vector<float>;
     std::vector<GLubyte> *colors = new std::vector<GLubyte>;
     int size = data->getPointColorData(pointData, colors);
     cDrawObject<float> *obj = new cDrawObject<float>(this->context()->functions(),
                                                      pointData->data(), colors->data(),
                                                      size, GL_POINTS);
+    removeFromDrawlist(data);
     filedataDrawindexMap[data] = drawList.size();
-    drawList.push_back(obj);
-//----------------------------
+        drawList.push_back(obj);
 
     delete pointData;
     delete colors;
+#endif
+//----------------------------
+#if DRAWMODE_SPHERES_DISPLAYLIST
+    disp = data->getDisplayList();
+#endif
+
     update();
 }
 
 void render_widget::removeFromDrawlist(cFileData *data){
-//    drawList.removeAll(data);
-
+#if DRAWMODE_SPHERES
+    drawList.removeAll(data);
+#endif
 //------------------------
-    int id = filedataDrawindexMap[data];
-    delete drawList.at(id);
-    drawList.removeAt(id);
+#if (DRAWMODE_BUFFER || DRAWMODE_INDEXED_BUFFER)
+    if (filedataDrawindexMap.contains(data)){
+        int id = filedataDrawindexMap[data];
+        delete drawList.at(id);
+        drawList.removeAt(id);
+    }
+#endif
 //------------------------
 
     update();
@@ -69,7 +86,7 @@ void render_widget::loadTextures(){
     QPixmap pixMap(QCoreApplication::applicationDirPath() + "/texture/earth_8k.jpg");
     if (pixMap.isNull())
         return;
-    tex = QGLWidget::convertToGLFormat(pixMap.toImage());
+    tex = new QImage(QGLWidget::convertToGLFormat(pixMap.toImage()));
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glGenTextures(1, &texture);
@@ -81,9 +98,11 @@ void render_widget::loadTextures(){
                     GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.width(),
-                 tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 tex.bits());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->width(),
+                 tex->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 tex->bits());
+
+    delete tex;
 }
 
 void render_widget::initializeGL()
@@ -169,33 +188,42 @@ void render_widget::paintGL()
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
 
+#if DRAWMODE_SPHERES_DISPLAYLIST
+    glCallList(disp);
+#endif
 
 //     DRAW: with cFileData-function
 //----------------------------------------
-//    foreach(cFileData* file, drawList){
-//        file->drawPoints(WORLD_SPHERE_RADIUS);
-//    }
+#if DRAWMODE_SPHERES
+    foreach(cFileData* file, drawList){
+        file->drawPoints(WORLD_SPHERE_RADIUS);
+    }
+#endif
 //----------------------------------------
 
 
 //     DRAW: with cDrawObject (glBuffer)
 //----------------------------------------
-//    glLineWidth(3);
-//    glPointSize(4);
+#if DRAWMODE_BUFFER
+    glLineWidth(3);
+    glPointSize(4);
     foreach (cDrawObject<float>* obj, drawList){
         obj->drawObject();
     }
-//    glPointSize(1);
-//    glLineWidth(1);
+    glPointSize(1);
+    glLineWidth(1);
+#endif
 //----------------------------------------
 
 //    DRAW: with indexed array (+/-)
 //----------------------------------------
-//    glPointSize(4);
-//    foreach (cDrawObject<float> *obj, drawList){
-//        obj->drawIndexObject(&indices);
-//    }
-//    glPointSize(1);
+#if DRAWMODE_INDEXED_BUFFER
+    glPointSize(4);
+    foreach (cDrawObject<float> *obj, drawList){
+        obj->drawIndexObject(&indices);
+    }
+    glPointSize(1);
+#endif
 //----------------------------------------
 
 //     TESTING SPHERE COORDINATES
@@ -302,6 +330,7 @@ void render_widget::keyPressEvent(QKeyEvent *event){
             showFullScreen();
             update();
         }
+#if DRAWMODE_INDEXED_BUFFER
     case Qt::Key_Plus:
         for (int i=0; i < 13; i++)
             indices.push_back(indices.size());
@@ -310,6 +339,7 @@ void render_widget::keyPressEvent(QKeyEvent *event){
         for (int i=0; i < 13; i++)
             indices.pop_back();
         break;
+#endif
     default:
         break;
     }

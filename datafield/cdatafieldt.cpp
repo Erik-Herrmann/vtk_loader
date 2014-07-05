@@ -8,14 +8,14 @@ void cDataFieldT<double>::writeToOut(QTextStream &out){
         out << m_DataName << " " << m_NumEntries << "\n";
         if (m_DataName == "time"){
             for (int i=0; i < m_NumEntries; ++i){
-                out << m_DataName << " " << i << ": " << m_Data[i] << " = \t"
-                    << Helpers::juliantimeToDatetime(m_Data[i]).toString("dddd dd.MMMM yyyy hh:mm:ss")
+                out << m_DataName << " " << i << ": " << m_Data->at(i) << " = \t"
+                    << Helpers::juliantimeToDatetime(m_Data->at(i)).toString("dddd dd.MMMM yyyy hh:mm:ss")
                     << "\n";
             }
         }
         else{
             for (int i=0; i < m_NumEntries; ++i){
-                out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+                out << m_DataName << " " << i << ": " << m_Data->at(i) << "\n";
             }
         }
     }
@@ -27,14 +27,14 @@ void cDataFieldT<float>::writeToOut(QTextStream &out){
         out << m_DataName << " " << m_NumEntries << "\n";
         if (m_DataName == "time"){
             for (int i=0; i < m_NumEntries; ++i){
-                out << m_DataName << " " << i << ": " << m_Data[i] << " = \t"
-                    << Helpers::juliantimeToDatetime(m_Data[i]).toString("dddd dd.MMMM yyyy hh:mm:ss")
+                out << m_DataName << " " << i << ": " << m_Data->at(i) << " = \t"
+                    << Helpers::juliantimeToDatetime(m_Data->at(i)).toString("dddd dd.MMMM yyyy hh:mm:ss")
                     << "\n";
             }
         }
         else{
             for (int i=0; i < m_NumEntries; ++i){
-                out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+                out << m_DataName << " " << i << ": " << m_Data->at(i) << "\n";
             }
         }
     }
@@ -47,17 +47,17 @@ void cDataFieldT<int>::writeToOut(QTextStream &out){
         if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
             int pos = 0;
             while(pos < m_NumEntries){
-                int values = m_Data[pos++];
+                int values = m_Data->at(pos++);
                 out << values;
                 for (int i=0; i < values; ++i){
-                    out << " " << m_Data[pos++];
+                    out << " " << m_Data->at(pos++);
                 }
                 out << "\n";
             }
         }
         else{
             for (int i=0; i < m_NumEntries; ++i){
-                out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+                out << m_DataName << " " << i << ": " << m_Data->at(i) << "\n";
             }
         }
     }
@@ -69,7 +69,7 @@ void cDataFieldT<vtkPoint>::writeToOut(QTextStream &out){
     if (m_NumEntries){
         out << m_DataName << " " << m_NumEntries << "\n";
         for (int i=0; i < m_NumEntries; ++i){
-            vtkPoint &p = m_Data[i];
+            vtkPoint &p = m_Data->at(i);
             out << m_DataName << " " << i << ": " << p.x << " " << p.y << " " << p.z << "\n";
         }
     }
@@ -78,7 +78,7 @@ void cDataFieldT<vtkPoint>::writeToOut(QTextStream &out){
 template<>
 void cDataFieldT<vtkPoint>::writeValueToOut(QTextStream &out, int index){
     if (index < m_NumEntries){
-        vtkPoint &p = m_Data[index];
+        vtkPoint &p = m_Data->at(index);
         out << m_DataName << " " << index << ": " << p.x << " " << p.y << " " << p.z << "\n";
     }
 }
@@ -117,10 +117,10 @@ void cDataFieldT<int>::filterData(std::set<int> *filterList, int opId, QString v
         if ((m_DataName == "LINES") || (m_DataName == "POLYGONS")){
             int pos =0;
             while (pos < m_NumEntries){
-                int lineSeg = m_Data[pos++];
+                int lineSeg = m_Data->at(pos++);
                 for (int i=0; i < lineSeg; ++i){
-                    if((*op)(m_Data[pos], value)){
-                        filterList->insert(m_Data[pos++]);
+                    if((*op)(m_Data->at(pos), value)){
+                        filterList->insert(m_Data->at(pos++));
                     }
                     else {
                         pos++;
@@ -130,7 +130,7 @@ void cDataFieldT<int>::filterData(std::set<int> *filterList, int opId, QString v
         }
         else {
             for (int i=0; i < m_NumEntries; ++i){
-                if((*op)(m_Data[i], value)){
+                if((*op)(m_Data->at(i), value)){
                     filterList->insert(i);
                 }
             }
@@ -168,7 +168,7 @@ void cDataFieldT<vtkPoint>::filterData(std::set<int> *filterList, int opId, QStr
         }
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
-            if(op(m_Data[i], value)){
+            if(op(m_Data->at(i), value)){
                 filterList->insert(i);
             }
         }
@@ -183,10 +183,10 @@ caDataField* cDataFieldT<int>::getDatafieldOfListedIndices(std::set<int> &indice
             int pos =0;
             QList<QList<int> > lines;
             while (pos < m_NumEntries){
-                int lineSeg = m_Data[pos++];
+                int lineSeg = m_Data->at(pos++);
                 QList<int> line;
                 for (int i=0; i < lineSeg; ++i){
-                    std::set<int>::iterator elemIt = indices.find(m_Data[pos]);
+                    std::set<int>::iterator elemIt = indices.find(m_Data->at(pos));
                     if (elemIt != indices.end()){
                         line.push_back(std::distance(indices.begin(), elemIt));
                     }
@@ -199,31 +199,33 @@ caDataField* cDataFieldT<int>::getDatafieldOfListedIndices(std::set<int> &indice
                 if (!line.isEmpty())
                     sumEntries += line.size()+1;
             }
-            int *newData = new int[sumEntries];
+            std::vector<int> *newData = new std::vector<int>;
+            newData->reserve(sumEntries);
             pos = 0;
             foreach(QList<int> line, lines){
                 if (!line.isEmpty()){
-                    newData[pos++] = line.size();
+                    newData->push_back(line.size());
                     foreach(int l, line){
-                        newData[pos++] = l;
+                        newData->push_back(l);
                     }
                 }
             }
             cDataFieldT<int> *newDf = new cDataFieldT<int>;
             newDf->setName(m_DataName);
-            newDf->setData(newData, sumEntries);
+            //newDf->setData(newData, sumEntries);
+            newDf->setData(newData, newData->size());
 
             return static_cast<caDataField*>(newDf);
         }
         else {
-            int *newData = new int[indices.size()];
-            int pos = 0;
+            std::vector<int> *newData = new std::vector<int>;
+            newData->reserve(indices.size());
             for (int i : indices) {
-                newData[pos++] = m_Data[i];
+                newData->push_back(m_Data->at(i));
             }
             cDataFieldT<int> *newDf = new cDataFieldT<int>;
             newDf->setName(m_DataName);
-            newDf->setData(newData, indices.size());
+            newDf->setData(newData, newData->size());
 
             return static_cast<caDataField*>(newDf);
         }

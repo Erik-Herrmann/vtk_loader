@@ -12,18 +12,18 @@ public:
     cDataFieldT();
     virtual ~cDataFieldT();
 
-    T* getDataPtr();
+    std::vector<T> *getDataPtr();
     T getValueAt(int index);
     void writeToOut(QTextStream &out);
     void writeValueToOut(QTextStream &out, int index);
 
-    void setData(T *data, int numEntries);
+    void setData(std::vector<T> *data, int numEntries);
 
     void filterData(std::set<int> *filterList, int opId, QString valStr);
     caDataField* getDatafieldOfListedIndices(std::set<int> &indices);
 
 private:
-    T *m_Data;
+    std::vector<T> *m_Data;
 };
 
 template<>

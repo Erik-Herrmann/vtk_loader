@@ -99,7 +99,7 @@ private slots:
     void applyFilters();
 
 public slots:
-    void showFilters();
+    void filteringData();
 
 };
 

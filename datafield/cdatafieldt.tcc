@@ -10,24 +10,24 @@ cDataFieldT<T>::cDataFieldT()
 
 template<typename T>
 cDataFieldT<T>::~cDataFieldT(){
-    delete[] m_Data;
+    delete m_Data;
 }
 
 template<typename T>
-T* cDataFieldT<T>::getDataPtr(){
+std::vector<T>* cDataFieldT<T>::getDataPtr(){
     return m_Data;
 }
 
 template<typename T>
 T cDataFieldT<T>::getValueAt(int index){
     if (index < m_NumEntries)
-        return m_Data[index];
+        return m_Data->at(index);
     else
         return T();
 }
 
 template<typename T>
-void cDataFieldT<T>::setData(T *data, int numEntries){
+void cDataFieldT<T>::setData(std::vector<T> *data, int numEntries){
     if (numEntries > 0){
         m_Data = data;
         m_NumEntries = numEntries;
@@ -38,7 +38,7 @@ template<typename T>
 void cDataFieldT<T>::writeToOut(QTextStream &out){
     if (m_NumEntries){
         for (int i=0; i < m_NumEntries; ++i){
-            out << m_DataName << " " << i << ": " << m_Data[i] << "\n";
+            out << m_DataName << " " << i << ": " << m_Data->at(i) << "\n";
         }
     }
 }
@@ -47,7 +47,7 @@ void cDataFieldT<T>::writeToOut(QTextStream &out){
 template<typename T>
 void cDataFieldT<T>::writeValueToOut(QTextStream &out, int index){
     if (m_NumEntries)
-        out << m_DataName << " " << index << ": " << m_Data[index] << "\n";
+        out << m_DataName << " " << index << ": " << m_Data->at(index) << "\n";
 }
 
 
@@ -82,7 +82,7 @@ void cDataFieldT<T>::filterData(std::set<int> *filterList, int opId, QString val
         }
         // compair and update List
         for (int i=0; i < m_NumEntries; ++i){
-            if(op(m_Data[i], value)){
+            if(op(m_Data->at(i), value)){
                 filterList->insert(i);
             }
         }
@@ -93,14 +93,14 @@ void cDataFieldT<T>::filterData(std::set<int> *filterList, int opId, QString val
 template<typename T>
 caDataField* cDataFieldT<T>::getDatafieldOfListedIndices(std::set<int> &indices){
     if (m_NumEntries && !indices.empty()){
-        T *newData = new T[indices.size()];
-        int pos = 0;
+        std::vector<T> *newData = new std::vector<T>;
+        newData->reserve(indices.size());
         for (int i : indices) {
-            newData[pos++] = m_Data[i];
+            newData->push_back(m_Data->at(i));
         }
         cDataFieldT<T> *newDf = new cDataFieldT<T>;
         newDf->setName(m_DataName);
-        newDf->setData(newData, indices.size());
+        newDf->setData(newData, newData->size());
 
         return static_cast<caDataField*>(newDf);
     }

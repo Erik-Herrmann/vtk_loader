@@ -8,8 +8,11 @@
 #include "ccamera.h"
 #include "cdrawobject.h"
 
-#define checkImageWidth 64
-#define checkImageHeight 64
+#define DRAWMODE_BUFFER 1
+#define DRAWMODE_INDEXED_BUFFER 0
+#define DRAWMODE_SPHERES 0
+#define DRAWMODE_SPHERES_DISPLAYLIST 0
+
 
 class render_widget : public QGLWidget
 {
@@ -43,16 +46,23 @@ private:
     int zRot;
     QPoint lastPos;
     GLuint texture;
-
+#if DRAWMODE_SPHERES_DISPLAYLIST
+    GLuint disp;
+#endif
+#if DRAWMODE_INDEXED_BUFFER
     std::vector<unsigned int> indices;
-//    QList<cFileData*> drawList;
+#endif
+#if DRAWMODE_SPHERES
+    QList<cFileData*> drawList;
+#endif
 //-----------------------
+#if (DRAWMODE_BUFFER || DRAWMODE_INDEXED_BUFFER)
     QList<cDrawObject<float>*> drawList;
     QMap<cFileData*, int> filedataDrawindexMap;
 //-----------------------
-
+#endif
     cCamera m_Camera;
-    QImage tex;
+    QImage *tex;
 
     void loadTextures();
 };
