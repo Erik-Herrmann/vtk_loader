@@ -64,6 +64,7 @@ private:
     cCamera m_Camera;
     QImage *tex;
 
+
     void loadTextures();
 };
 

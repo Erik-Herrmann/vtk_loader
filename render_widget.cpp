@@ -44,6 +44,7 @@ void render_widget::addToDrawlist(cFileData *data){
 #endif
 //----------------------------
 #if (DRAWMODE_BUFFER || DRAWMODE_INDEXED_BUFFER)
+    if (data->fileType() == MIPAS){
     std::vector<float> *pointData = new std::vector<float>;
     std::vector<GLubyte> *colors = new std::vector<GLubyte>;
     int size = data->getPointColorData(pointData, colors);
@@ -56,6 +57,18 @@ void render_widget::addToDrawlist(cFileData *data){
 
     delete pointData;
     delete colors;
+    }
+    else{
+        std::vector<float> *pointData = new std::vector<float>;
+        int size = data->getPointData(pointData);
+        cDrawObject<float> *obj = new cDrawObject<float>(this->context()->functions(),
+                                                         pointData->data(), size, GL_POINTS);
+        removeFromDrawlist(data);
+        filedataDrawindexMap[data] = drawList.size();
+            drawList.push_back(obj);
+
+        delete pointData;
+    }
 #endif
 //----------------------------
 #if DRAWMODE_SPHERES_DISPLAYLIST
@@ -114,7 +127,7 @@ void render_widget::initializeGL()
     // load world texture to GPU-Buffer
     loadTextures();
 
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     //glEnable(GL_LIGHTING);
@@ -156,6 +169,62 @@ void drawAxis(){
     glLineWidth(1);
 }
 
+void drawVolcano(){
+    // Grímsvötn (Island)
+    glColor3f(1.0, 0.0, 0.0);
+    GLUquadricObj *volc = gluNewQuadric();
+    glPushMatrix();
+    glTranslatef((WORLD_SPHERE_RADIUS*1.001)
+                          *sin(THETA(VOLCANO_GRIMSVOTN_LATITUDE))
+                          *sin(PHI(VOLCANO_GRIMSVOTN_LONGITUDE)),
+                 (WORLD_SPHERE_RADIUS*1.001)
+                          *cos(THETA(VOLCANO_GRIMSVOTN_LATITUDE)),
+                 (WORLD_SPHERE_RADIUS*1.001)
+                          *sin(THETA(VOLCANO_GRIMSVOTN_LATITUDE))
+                          *cos(PHI(VOLCANO_GRIMSVOTN_LONGITUDE)));
+    glRotatef(-VOLCANO_GRIMSVOTN_LATITUDE, 1.0, 0.0, 0.0);
+    glRotatef(VOLCANO_GRIMSVOTN_LONGITUDE, 0.0, 1.0, 0.0);
+    gluDisk(volc, 0,
+            (0.005)*WORLD_SPHERE_RADIUS,
+            10, 1);
+    glPopMatrix();
+
+    // Puyehue-Cordón Caulle (Chile)
+    glPushMatrix();
+    glTranslatef((WORLD_SPHERE_RADIUS*1.001)
+                          *sin(THETA(VOLCANO_PUYEHUE_LATITUDE))
+                          *sin(PHI(VOLCANO_PUYEHUE_LONGITUDE)),
+                 (WORLD_SPHERE_RADIUS*1.001)
+                          *cos(THETA(VOLCANO_PUYEHUE_LATITUDE)),
+                 (WORLD_SPHERE_RADIUS*1.001)
+                          *sin(THETA(VOLCANO_PUYEHUE_LATITUDE))
+                          *cos(PHI(VOLCANO_PUYEHUE_LONGITUDE)));
+    glRotatef(-VOLCANO_PUYEHUE_LATITUDE, 1.0, 0.0, 0.0);
+    glRotatef(VOLCANO_PUYEHUE_LONGITUDE, 0.0, 1.0, 0.0);
+    gluDisk(volc, 0,
+            (0.005)*WORLD_SPHERE_RADIUS,
+            10, 3);
+    glPopMatrix();
+
+    // Nabro (Eritrea)
+    glPushMatrix();
+    glTranslatef((WORLD_SPHERE_RADIUS*1.001)
+                          *sin(THETA(VOLCANO_NABRO_LATITUDE))
+                          *sin(PHI(VOLCANO_NABRO_LONGITUDE)),
+                 (WORLD_SPHERE_RADIUS*1.001)
+                          *cos(THETA(VOLCANO_NABRO_LATITUDE)),
+                 (WORLD_SPHERE_RADIUS*1.001)
+                          *sin(THETA(VOLCANO_NABRO_LATITUDE))
+                          *cos(PHI(VOLCANO_NABRO_LONGITUDE)));
+    glRotatef(-VOLCANO_NABRO_LATITUDE, 1.0, 0.0, 0.0);
+    glRotatef(VOLCANO_NABRO_LONGITUDE, 0.0, 1.0, 0.0);
+    gluDisk(volc, 0,
+            (0.005)*WORLD_SPHERE_RADIUS,
+            10, 3);
+    glPopMatrix();
+    gluDeleteQuadric(volc);
+}
+
 void render_widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -167,6 +236,7 @@ void render_widget::paintGL()
     // set Camera position + orientation
     glLoadIdentity();
     m_Camera.render();
+
 
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
@@ -184,9 +254,10 @@ void render_widget::paintGL()
         gluSphere(gSphere, WORLD_SPHERE_RADIUS, 50, 50);
         gluDeleteQuadric(gSphere);
     glPopMatrix();
-
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
+
+    drawVolcano();
 
 #if DRAWMODE_SPHERES_DISPLAYLIST
     glCallList(disp);
