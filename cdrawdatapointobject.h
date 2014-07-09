@@ -1,18 +1,17 @@
-#ifndef CDRAWOBJECT_H
-#define CDRAWOBJECT_H
+#ifndef CDRAWDATAPOINTOBJECT_H
+#define CDRAWDATAPOINTOBJECT_H
 
 #include "cadrawobject.h"
 #include <QtOpenGL>
 #include <QOpenGLVertexArrayObject>
 
 template <typename T>
-class cDrawObject : public caDrawObject
+class cDrawDataPointObject : public caDrawObject
 {
 public:
-    cDrawObject(QGLFunctions *func);
-    cDrawObject(QGLFunctions *func, T *vertex, size_t size, GLenum type=GL_POINTS);
-    cDrawObject(QGLFunctions *func, T *vertex, GLubyte *color, size_t size, GLenum type=GL_POINTS);
-    virtual ~cDrawObject();
+    cDrawDataPointObject(QGLFunctions *func);
+    cDrawDataPointObject(QGLFunctions *func, T *vertex, size_t size, GLenum type=GL_QUADS);
+    virtual ~cDrawDataPointObject();
 
     void setVertices(T *vertices, size_t size);
     T* getVertices();
@@ -29,20 +28,21 @@ private:
     GLenum m_Type;
 
     QGLBuffer *m_VertexBuffer;
-    QGLBuffer *m_ColorBuffer;
+    GLuint m_texture;
+    QGLBuffer *m_TextureCoordBuffer;
     QOpenGLVertexArrayObject *m_vao;
 
     QOpenGLShaderProgram *m_shaderProgram;
 
     T *m_VertexPtr;
-    GLubyte *m_ColorPtr;
     unsigned int m_size;
 
     void createVBO();
     void loadShaders();
+    void generateQuads(T *points, T *quads, float *texCoord);
 
 };
 
-#include "cdrawobject.tcc"
+#include "cdrawdatapointobject.tcc"
 
-#endif // CDRAWOBJECT_H
+#endif // CDRAWDATAPOINTOBJECT_H

@@ -14,7 +14,7 @@
 
 
 render_widget::render_widget(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer ), parent)
+    : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer | QGL::Rgba | QGL::AlphaChannel), parent)
 {
     setWindowTitle("Render Widget");
     m_Camera.setPosition(QVector3D(0.0, 0.0, WORLD_SPHERE_RADIUS+10));
@@ -48,9 +48,9 @@ void render_widget::addToDrawlist(cFileData *data){
     std::vector<float> *pointData = new std::vector<float>;
     std::vector<GLubyte> *colors = new std::vector<GLubyte>;
     int size = data->getPointColorData(pointData, colors);
-    cDrawObject<float> *obj = new cDrawObject<float>(this->context()->functions(),
-                                                     pointData->data(), colors->data(),
-                                                     size, GL_POINTS);
+    cDrawDataPointObject<float> *obj = new cDrawDataPointObject<float>(this->context()->functions(),
+                                                     pointData->data(),
+                                                     size, GL_QUADS);
     removeFromDrawlist(data);
     filedataDrawindexMap[data] = drawList.size();
         drawList.push_back(obj);
@@ -134,6 +134,7 @@ void render_widget::initializeGL()
     glEnable(GL_LIGHT0);
     glEnable(GL_MULTISAMPLE);
     //glEnable(GL_TEXTURE_2D);
+
 
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
@@ -278,7 +279,7 @@ void render_widget::paintGL()
 #if DRAWMODE_BUFFER
     glLineWidth(3);
     glPointSize(4);
-    foreach (cDrawObject<float>* obj, drawList){
+    foreach (caDrawObject* obj, drawList){
         obj->drawObject();
     }
     glPointSize(1);
@@ -290,7 +291,7 @@ void render_widget::paintGL()
 //----------------------------------------
 #if DRAWMODE_INDEXED_BUFFER
     glPointSize(4);
-    foreach (cDrawObject<float> *obj, drawList){
+    foreach (caDrawObject *obj, drawList){
         obj->drawIndexObject(&indices);
     }
     glPointSize(1);

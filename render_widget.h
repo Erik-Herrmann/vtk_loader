@@ -6,7 +6,9 @@
 #include "datastruct.h"
 #include "cfiledata.h"
 #include "ccamera.h"
+#include "cadrawobject.h"
 #include "cdrawobject.h"
+#include "cdrawdatapointobject.h"
 
 #define DRAWMODE_BUFFER 1
 #define DRAWMODE_INDEXED_BUFFER 0
@@ -57,7 +59,7 @@ private:
 #endif
 //-----------------------
 #if (DRAWMODE_BUFFER || DRAWMODE_INDEXED_BUFFER)
-    QList<cDrawObject<float>*> drawList;
+    QList<caDrawObject*> drawList;
     QMap<cFileData*, int> filedataDrawindexMap;
 //-----------------------
 #endif

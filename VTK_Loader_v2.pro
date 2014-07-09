@@ -29,7 +29,9 @@ SOURCES += main.cpp\
     datafield/cdatafieldt.cpp \
     render_widget.cpp \
     ccamera.cpp \
-	cfiledata.cpp
+	cfiledata.cpp \
+    cdrawdatapointobject.tcc \
+    cadrawobject.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -52,7 +54,9 @@ HEADERS  += mainwindow.h \
     ccamera.h \
     cfiledata.h \
     cdrawobject.h \
-    globaldefines.h
+    globaldefines.h \
+    cdrawdatapointobject.h \
+    cadrawobject.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui
