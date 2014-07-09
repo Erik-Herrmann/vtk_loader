@@ -5,25 +5,33 @@
 #include <QTextStream>
 #include "vtkpoint.h"
 
+#define DATAFIELD_ELEMENTS_PER_CHUNK 1000000
+
 template<typename T>
 class cDataFieldT : public caDataField
 {
 public:
-    cDataFieldT();
+    cDataFieldT(unsigned int numElements);
     virtual ~cDataFieldT();
 
-    std::vector<T> *getDataPtr();
+    //std::vector<T> *getDataPtr();
     T getValueAt(int index);
     void writeToOut(QTextStream &out);
     void writeValueToOut(QTextStream &out, int index);
 
-    void setData(std::vector<T> *data, int numEntries);
+    //void setData(std::vector<T> *data, int numEntries);
 
     void filterData(std::set<int> *filterList, int opId, QString valStr);
     caDataField* getDatafieldOfListedIndices(std::set<int> &indices);
 
+    T& operator[](std::size_t index);
+    T& at(std::size_t index);
+    void push_back(T value);
+
+
 private:
-    std::vector<T> *m_Data;
+    unsigned int m_ReservedElements;
+    QList<std::vector<T>*> m_DataList;
 };
 
 template<>

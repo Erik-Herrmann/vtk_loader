@@ -88,8 +88,8 @@ void vtk_loader::loadData(QString filename){
         else {
             if (strings.at(0) == "POINTS"){
                 int values = strings.at(1).toInt();
-                std::vector<vtkPoint>* data = new std::vector<vtkPoint>;
-                data->reserve(values);
+                cDataFieldT<vtkPoint> *df = new cDataFieldT<vtkPoint>(values);
+                df->setName(strings.at(0));
                 int progressUpdate = values/100;
                 emit resetProgress();
                 emit setProgress(QString("Loading Points (%1) ...").arg(values));
@@ -101,15 +101,11 @@ void vtk_loader::loadData(QString filename){
                     myPoint.x = reverse(myPoint.x);
                     myPoint.y = reverse(myPoint.y);
                     myPoint.z = reverse(myPoint.z);
-                    data->push_back(myPoint);
+                    df->push_back(myPoint);
                     if (!(i%progressUpdate))
                         emit addProgress(1);
                 }
-                cDataFieldT<vtkPoint> *df = new cDataFieldT<vtkPoint>;
-                df->setName(strings.at(0));
-                df->setData(data, data->size());
                 filedata->push_back(df);
-                //filedata->numDataFields++;
             }
             else if ((strings.at(0) == "POLYGONS") || (strings.at(0) == "LINES")){
                 readDataField<int>(inFile, &line, strings.at(1).toInt(), strings.at(2).toInt());
@@ -134,9 +130,8 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
 {
     QString fieldName = line->left(line->indexOf(' '));
 
-    std::vector<T>* data = new std::vector<T>;
-    //T* tmp = (T*)malloc(numVal*sizeof(T));
-    data->reserve(numVal);
+    cDataFieldT<T>* df = new cDataFieldT<T>(numVal);
+    df->setName(fieldName);
     if (lines > 1){
         emit setProgress(QString("Loading %1 (%2) ...")
                          .arg(fieldName).arg(lines));
@@ -146,11 +141,11 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         for (int i=0; i < lines; ++i){
             inFile->read((char*)&value0, sizeof(T));
             value0 = reverse<T>(value0);
-            data->push_back(value0);
+            df->push_back(value0);
             for (int j=0; j < value0; ++j){
                 inFile->read((char*)&value1, sizeof(T));
                 value1 = reverse<T>(value1);
-                data->push_back(value1);
+                df->push_back(value1);
             }
             if (!(i%progressUpdate))
                 emit addProgress(2);
@@ -165,17 +160,12 @@ void vtk_loader::readDataField(QFile *inFile, QString *line,
         for (int i=0; i < numVal; ++i){
             inFile->read((char*)&value, sizeof(T));
             value = reverse<T>(value);
-            data->push_back(value);
+            df->push_back(value);
             if (!(i%progressUpdate))
                 emit addProgress(1);
         }
     }
-
-    cDataFieldT<T>* df = new cDataFieldT<T>;
-    df->setName(fieldName);
-    df->setData((std::vector<T>*)data, data->size());
     filedata->push_back(df);
-    //filedata->numDataFields++;
 }
 
 
