@@ -48,7 +48,7 @@ void render_widget::addToDrawlist(cFileData *data){
     std::vector<float> *pointData = new std::vector<float>;
     std::vector<GLubyte> *colors = new std::vector<GLubyte>;
     int size = data->getPointColorData(pointData, colors);
-    cDrawDataPointObject<float> *obj = new cDrawDataPointObject<float>(this->context()->functions(),
+    cDrawObjectQuadSpheres<float> *obj = new cDrawObjectQuadSpheres<float>(this->context()->functions(),
                                                      pointData->data(),
                                                      size, GL_QUADS);
     removeFromDrawlist(data);

@@ -4,7 +4,8 @@
 
 template<typename T>
 cDrawObject<T>::cDrawObject(QGLFunctions *func)
-    : m_glFunc(func),
+    : caDrawObject(DrawObject_PointsMIPAS),
+      m_glFunc(func),
       m_Type(GL_POINTS), m_VertexBuffer(0),
       m_vao(0), m_shaderProgram(0),
       m_VertexPtr(0), m_ColorPtr(0), m_size(0)
@@ -16,7 +17,8 @@ cDrawObject<T>::cDrawObject(QGLFunctions *func)
 
 template<typename T>
 cDrawObject<T>::cDrawObject(QGLFunctions *func, T *vertex, size_t size, GLenum type)
-    : m_glFunc(func),
+    : caDrawObject(DrawObject_PointsMIPAS),
+      m_glFunc(func),
       m_Type(type), m_VertexBuffer(0),
       m_vao(0), m_shaderProgram(0),
       m_VertexPtr(vertex), m_ColorPtr(0), m_size(size)
@@ -29,7 +31,8 @@ cDrawObject<T>::cDrawObject(QGLFunctions *func, T *vertex, size_t size, GLenum t
 
 template<typename T>
 cDrawObject<T>::cDrawObject(QGLFunctions *func, T *vertex, GLubyte *color, size_t size, GLenum type)
-    : m_glFunc(func),
+    : caDrawObject(DrawObject_PointsMIPAS),
+      m_glFunc(func),
       m_Type(type), m_VertexBuffer(0),
       m_vao(0), m_shaderProgram(0),
       m_VertexPtr(vertex), m_ColorPtr(color), m_size(size)

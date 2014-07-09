@@ -30,8 +30,8 @@ SOURCES += main.cpp\
     render_widget.cpp \
     ccamera.cpp \
 	cfiledata.cpp \
-    cdrawdatapointobject.tcc \
-    cadrawobject.cpp
+    cadrawobject.cpp \
+    cdrawobjectquadspheres.tcc
 
 
 HEADERS  += mainwindow.h \
@@ -55,8 +55,8 @@ HEADERS  += mainwindow.h \
     cfiledata.h \
     cdrawobject.h \
     globaldefines.h \
-    cdrawdatapointobject.h \
-    cadrawobject.h
+    cadrawobject.h \
+    cdrawobjectquadspheres.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui
@@ -64,10 +64,10 @@ FORMS    += mainwindow.ui \
 QT           += opengl
 
 
-INCLUDEPATH += C:/boostLib
+#INCLUDEPATH += C:/boostLib
 
 OTHER_FILES += \
 	texture/earth_8k.jpg \
 	texture/earthmap1k.png \
-    shader/pointShader.vert \
-    shader/pointShader.frag
+    texture/dot.png
+

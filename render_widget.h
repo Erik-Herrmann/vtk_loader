@@ -8,7 +8,7 @@
 #include "ccamera.h"
 #include "cadrawobject.h"
 #include "cdrawobject.h"
-#include "cdrawdatapointobject.h"
+#include "cdrawobjectquadspheres.h"
 
 #define DRAWMODE_BUFFER 1
 #define DRAWMODE_INDEXED_BUFFER 0
