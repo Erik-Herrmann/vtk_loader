@@ -11,6 +11,7 @@ class cDrawObjectQuadSpheres : public caDrawObject
 public:
     cDrawObjectQuadSpheres(QGLFunctions *func);
     cDrawObjectQuadSpheres(QGLFunctions *func, T *vertex, size_t size, GLenum type=GL_QUADS);
+    cDrawObjectQuadSpheres(QGLFunctions *func, T *vertex, unsigned char *detection, size_t size, GLenum type=GL_QUADS);
     virtual ~cDrawObjectQuadSpheres();
 
     void setVertices(T *vertices, size_t size);
@@ -32,13 +33,11 @@ private:
     QGLBuffer *m_TextureCoordBuffer;
     QOpenGLVertexArrayObject *m_vao;
 
-    QOpenGLShaderProgram *m_shaderProgram;
-
     T *m_VertexPtr;
+    unsigned char *m_DetectionPtr;
     unsigned int m_size;
 
     void createVBO();
-    void loadShaders();
     void generateQuads(T *points, T *quads, float *texCoord);
 
 };

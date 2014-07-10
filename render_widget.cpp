@@ -6,6 +6,7 @@
 #include <QImage>
 #include <math.h>
 #include "globaldefines.h"
+#include "datafield/cdatafieldt.h"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -45,18 +46,19 @@ void render_widget::addToDrawlist(cFileData *data){
 //----------------------------
 #if (DRAWMODE_BUFFER || DRAWMODE_INDEXED_BUFFER)
     if (data->fileType() == MIPAS){
-    std::vector<float> *pointData = new std::vector<float>;
-    std::vector<GLubyte> *colors = new std::vector<GLubyte>;
-    int size = data->getPointColorData(pointData, colors);
-    cDrawObjectQuadSpheres<float> *obj = new cDrawObjectQuadSpheres<float>(this->context()->functions(),
-                                                     pointData->data(),
-                                                     size, GL_QUADS);
-    removeFromDrawlist(data);
-    filedataDrawindexMap[data] = drawList.size();
-        drawList.push_back(obj);
+        std::vector<float> *pointData = new std::vector<float>;
+        int size = data->getPointData(pointData);
+        std::vector<unsigned char> *detect =
+                static_cast<cDataFieldT<unsigned char>*>(data->getDatafield("detection"))->getDataVector();
+        cDrawObjectQuadSpheres<float> *obj = new cDrawObjectQuadSpheres<float>(this->context()->functions(),
+                                                         pointData->data(), detect->data(),
+                                                         size, GL_QUADS);
+        removeFromDrawlist(data);
+        filedataDrawindexMap[data] = drawList.size();
+            drawList.push_back(obj);
 
-    delete pointData;
-    delete colors;
+        delete pointData;
+        delete detect;
     }
     else{
         std::vector<float> *pointData = new std::vector<float>;

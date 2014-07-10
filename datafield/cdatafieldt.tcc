@@ -146,3 +146,14 @@ caDataField* cDataFieldT<T>::getDatafieldOfListedIndices(std::set<int> &indices)
     }
     return 0;
 }
+
+
+template<typename T>
+std::vector<T>* cDataFieldT<T>::getDataVector(){
+    std::vector<T>* vec = new std::vector<T>;
+    vec->reserve(m_NumEntries);
+    foreach (std::vector<T>* v, m_DataList) {
+        vec->insert(vec->end(), v->begin(), v->end());
+    }
+    return vec;
+}

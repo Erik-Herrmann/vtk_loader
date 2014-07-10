@@ -7,8 +7,8 @@ cDrawObjectQuadSpheres<T>::cDrawObjectQuadSpheres(QGLFunctions *func)
     : caDrawObject(DrawObject_QuadSpheres),
       m_glFunc(func),
       m_Type(GL_QUADS), m_VertexBuffer(0),
-      m_vao(0), m_shaderProgram(0),
-      m_VertexPtr(0), m_size(0)
+      m_vao(0), m_VertexPtr(0),
+      m_DetectionPtr(0), m_size(0)
 {
     m_vao = new QOpenGLVertexArrayObject();
     m_vao->create();
@@ -19,14 +19,27 @@ cDrawObjectQuadSpheres<T>::cDrawObjectQuadSpheres(QGLFunctions *func, T *vertex,
     : caDrawObject(DrawObject_QuadSpheres),
       m_glFunc(func),
       m_Type(type), m_VertexBuffer(0),
-      m_vao(0), m_shaderProgram(0),
-      m_VertexPtr(vertex), m_size(size)
+      m_vao(0), m_VertexPtr(vertex),
+      m_DetectionPtr(0), m_size(size)
 {
     m_vao = new QOpenGLVertexArrayObject();
     m_vao->create();
     createVBO();
 }
 
+
+template<typename T>
+cDrawObjectQuadSpheres<T>::cDrawObjectQuadSpheres(QGLFunctions *func, T *vertex, unsigned char *detection, size_t size, GLenum type)
+    : caDrawObject(DrawObject_QuadSpheres),
+      m_glFunc(func),
+      m_Type(type), m_VertexBuffer(0),
+      m_vao(0), m_VertexPtr(vertex),
+      m_DetectionPtr(detection), m_size(size)
+{
+    m_vao = new QOpenGLVertexArrayObject();
+    m_vao->create();
+    createVBO();
+}
 
 template<typename T>
 cDrawObjectQuadSpheres<T>::~cDrawObjectQuadSpheres(){
@@ -63,82 +76,117 @@ void cDrawObjectQuadSpheres<T>::generateQuads(T *points, T *quads, float* texCoo
     unsigned int q = 0;
     unsigned int t = 0;
     for (unsigned int i=0; i < m_size/3; ++i){
+        float a=0.0,b=0.0,c=0.0,d=0.0;
+        if (m_DetectionPtr){
+            switch(m_DetectionPtr[i]){
+            case 0:
+                a = 0.0;
+                b = 0.0;
+                c = 0.5;
+                d = 0.5;
+                break;
+            case 1:
+                a = 0.5;
+                b = 0.0;
+                c = 1.0;
+                d = 0.5;
+                break;
+            case 2:
+                a = 0.0;
+                b = 0.5;
+                c = 0.5;
+                d = 1.0;
+                break;
+            case 4:
+                a = 0.5;
+                b = 0.5;
+                c = 1.0;
+                d = 1.0;
+                break;
+            }
+        }
+        else{
+            a = 0.0;
+            b = 0.0;
+            c = 1.0;
+            d = 1.0;
+        }
         // x-y-plane
         // p1
         quads[q++] = points[3*i+0]-0.01;
         quads[q++] = points[3*i+1]+0.01;
         quads[q++] = points[3*i+2];
-        texCoord[t++] = 0.0;
-        texCoord[t++] = 0.0;
+        texCoord[t++] = a;
+        texCoord[t++] = b;
         // p2
         quads[q++] = points[3*i+0]-0.01;
         quads[q++] = points[3*i+1]-0.01;
         quads[q++] = points[3*i+2];
-        texCoord[t++] = 0.0;
-        texCoord[t++] = 1.0;
+        texCoord[t++] = a;
+        texCoord[t++] = d;
         // p3
         quads[q++] = points[3*i+0]+0.01;
         quads[q++] = points[3*i+1]-0.01;
         quads[q++] = points[3*i+2];
-        texCoord[t++] = 1.0;
-        texCoord[t++] = 1.0;
+        texCoord[t++] = c;
+        texCoord[t++] = d;
         //p4
         quads[q++] = points[3*i+0]+0.01;
         quads[q++] = points[3*i+1]+0.01;
         quads[q++] = points[3*i+2];
-        texCoord[t++] = 1.0;
-        texCoord[t++] = 0.0;
+        texCoord[t++] = c;
+        texCoord[t++] = b;
         // x-z-plane
         // p1
         quads[q++] = points[3*i+0]-0.01;
         quads[q++] = points[3*i+1];
         quads[q++] = points[3*i+2]+0.01;
-        texCoord[t++] = 0.0;
-        texCoord[t++] = 0.0;
+        texCoord[t++] = a;
+        texCoord[t++] = b;
         // p2
         quads[q++] = points[3*i+0]-0.01;
         quads[q++] = points[3*i+1];
         quads[q++] = points[3*i+2]-0.01;
-        texCoord[t++] = 0.0;
-        texCoord[t++] = 1.0;
+        texCoord[t++] = a;
+        texCoord[t++] = d;
         // p3
         quads[q++] = points[3*i+0]+0.01;
         quads[q++] = points[3*i+1];
         quads[q++] = points[3*i+2]-0.01;
-        texCoord[t++] = 1.0;
-        texCoord[t++] = 1.0;
+        texCoord[t++] = c;
+        texCoord[t++] = d;
         // p4
         quads[q++] = points[3*i+0]+0.01;
         quads[q++] = points[3*i+1];
         quads[q++] = points[3*i+2]+0.01;
-        texCoord[t++] = 1.0;
-        texCoord[t++] = 0.0;
+        texCoord[t++] = c;
+        texCoord[t++] = b;
 
         // y-z-plane
         // p1
         quads[q++] = points[3*i+0];
         quads[q++] = points[3*i+1]+0.01;
         quads[q++] = points[3*i+2]-0.01;
-        texCoord[t++] = 0.0;
-        texCoord[t++] = 0.0;
+        texCoord[t++] = a;
+        texCoord[t++] = b;
         // p2
         quads[q++] = points[3*i+0];
         quads[q++] = points[3*i+1]-0.01;
         quads[q++] = points[3*i+2]-0.01;
-        texCoord[t++] = 0.0;
-        texCoord[t++] = 1.0;
+        texCoord[t++] = a;
+        texCoord[t++] = d;
         // p3
         quads[q++] = points[3*i+0];
         quads[q++] = points[3*i+1]-0.01;
         quads[q++] = points[3*i+2]+0.01;
-        texCoord[t++] = 1.0;
-        texCoord[t++] = 1.0;
+        texCoord[t++] = c;
+        texCoord[t++] = d;
         // p4
         quads[q++] = points[3*i+0];
         quads[q++] = points[3*i+1]+0.01;
         quads[q++] = points[3*i+2]+0.01;
-        texCoord[t++] = 1.0;
-        texCoord[t++] = 0.0;
+        texCoord[t++] = c;
+        texCoord[t++] = b;
     }
 }
 
@@ -166,15 +214,23 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
     m_TextureCoordBuffer->allocate(texCoord, 12*(m_size-(m_size/3))*sizeof(unsigned int));
     glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
-
-
-    QImage tex(QGLWidget::convertToGLFormat(
-                   QImage(
-                       QCoreApplication::applicationDirPath() +
-                        QString("/texture/dot.png"))
-                   )
-               );
-
+    QImage *tex;
+    if (m_DetectionPtr){
+        tex = new QImage(QGLWidget::convertToGLFormat(
+                           QImage(
+                               QCoreApplication::applicationDirPath() +
+                                QString("/texture/dot_MIPAS.png"))
+                             )
+                         );
+    }
+    else{
+        tex = new QImage(QGLWidget::convertToGLFormat(
+                           QImage(
+                               QCoreApplication::applicationDirPath() +
+                                QString("/texture/dot.png"))
+                             )
+                         );
+    }
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -187,10 +243,11 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
                     GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                     GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.width(),
-                 tex.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 tex.bits());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->width(),
+                 tex->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 tex->bits());
 
+    delete tex;
     delete texCoord;
     delete quads;
 
@@ -198,24 +255,6 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
 
 }
 
-template<typename T>
-void cDrawObjectQuadSpheres<T>::loadShaders(){
-    bool result = true;
-    result = m_shaderProgram->addShaderFromSourceFile(
-                                    QOpenGLShader::Vertex,
-                                    QCoreApplication::applicationDirPath() +
-                                    "/shader/pointShader.vert");
-
-    if (!result)
-        printf("Couldn't load ShaderProgram: Vertex\n");
-
-    result = m_shaderProgram->addShaderFromSourceFile(
-                                    QOpenGLShader::Fragment,
-                                    QCoreApplication::applicationDirPath() +
-                                    "/shader/pointShader.frag");
-    if (!result)
-        printf("Couldn't load ShaderProgram: Fragment\n");
-}
 
 template<typename T>
 void cDrawObjectQuadSpheres<T>::drawObject(){
@@ -233,7 +272,7 @@ void cDrawObjectQuadSpheres<T>::drawObject(){
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    glDrawArrays(m_Type, 0, m_size/3);
+    glDrawArrays(m_Type, 0, 4*m_size);
 
     glDisable(GL_BLEND);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
