@@ -30,8 +30,7 @@ SOURCES += main.cpp\
     render_widget.cpp \
     ccamera.cpp \
 	cfiledata.cpp \
-    cadrawobject.cpp \
-    cdrawobjectquadspheres.tcc
+    cadrawobject.cpp
 
 
 HEADERS  += mainwindow.h \

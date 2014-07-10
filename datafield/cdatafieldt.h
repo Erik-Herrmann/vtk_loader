@@ -28,6 +28,8 @@ public:
     T& at(std::size_t index);
     void push_back(T value);
 
+    std::vector<T>* getDataVector();
+
 
 private:
     unsigned int m_ReservedElements;
