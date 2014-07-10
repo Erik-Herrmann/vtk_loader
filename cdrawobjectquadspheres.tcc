@@ -272,7 +272,7 @@ void cDrawObjectQuadSpheres<T>::drawObject(){
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    glDrawArrays(m_Type, 0, m_size/3);
+    glDrawArrays(m_Type, 0, 4*m_size);
 
     glDisable(GL_BLEND);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
