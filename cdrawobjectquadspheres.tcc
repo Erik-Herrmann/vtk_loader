@@ -81,27 +81,27 @@ void cDrawObjectQuadSpheres<T>::generateQuads(T *points, T *quads, float* texCoo
             switch(m_DetectionPtr[i]){
             case 0:
                 a = 0.0;
-                b = 0.0;
+                b = 0.5;
                 c = 0.5;
-                d = 0.5;
+                d = 1.0;
                 break;
             case 1:
                 a = 0.5;
-                b = 0.0;
+                b = 0.5;
                 c = 1.0;
-                d = 0.5;
+                d = 1.0;
                 break;
             case 2:
                 a = 0.0;
-                b = 0.5;
+                b = 0.0;
                 c = 0.5;
-                d = 1.0;
+                d = 0.5;
                 break;
             case 4:
                 a = 0.5;
-                b = 0.5;
+                b = 0.0;
                 c = 1.0;
-                d = 1.0;
+                d = 0.5;
                 break;
             }
         }
