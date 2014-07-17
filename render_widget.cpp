@@ -124,7 +124,7 @@ void render_widget::initializeGL()
 {
     makeCurrent();
 
-    glClearColor (0.0, 0.0, 0.0, 0.0);
+    glClearColor (0.0, 0.0, 0.0, 1.0);
 
     // load world texture to GPU-Buffer
     loadTextures();
@@ -139,6 +139,10 @@ void render_widget::initializeGL()
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_ALPHA_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     //glEnable(GL_TEXTURE_2D);
 
 
@@ -248,7 +252,6 @@ void render_widget::paintGL()
     glLoadIdentity();
     m_Camera.render();
 
-
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 
@@ -325,6 +328,7 @@ void render_widget::paintGL()
 
     glDisable(GL_LIGHTING);
     patch->drawPatchs();
+
     glFlush();
 }
 

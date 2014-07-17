@@ -108,7 +108,7 @@ void cWorldPatch::drawPatch(){
     glEnd();
 
     // the test the Patch size
-    glColor4f(0.0f, 0.0f, 0.0f, m_AlphaValue);
+    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     glLineWidth(1.5);
     for (Quad q : m_PatchQuads){
         glBegin(GL_LINE_LOOP);
