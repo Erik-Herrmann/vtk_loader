@@ -9,6 +9,7 @@
 #include "cadrawobject.h"
 #include "cdrawobject.h"
 #include "cdrawobjectquadspheres.h"
+#include "cworldpatchcontroller.h"
 
 #define DRAWMODE_BUFFER 1
 #define DRAWMODE_INDEXED_BUFFER 0
@@ -65,6 +66,8 @@ private:
 #endif
     cCamera m_Camera;
     QImage *tex;
+
+    cWorldPatchController* patch;
 
 
     void loadTextures();

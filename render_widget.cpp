@@ -129,11 +129,15 @@ void render_widget::initializeGL()
     // load world texture to GPU-Buffer
     loadTextures();
 
+    patch = new cWorldPatchController();
+    patch->createPatchs(36, 18);
+
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     //glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
     glEnable(GL_MULTISAMPLE);
     //glEnable(GL_TEXTURE_2D);
 
@@ -142,7 +146,11 @@ void render_widget::initializeGL()
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
     static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
+    static GLfloat light1Position[4] = { -0.5, -5.0, -7.0, -1.0 };
+    GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+    glLightfv(GL_LIGHT1, GL_POSITION, light1Position);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
 }
 
 void drawAxis(){
@@ -315,6 +323,8 @@ void render_widget::paintGL()
 //    glLineWidth(1);
 //--------------------------------------------------------
 
+    glDisable(GL_LIGHTING);
+    patch->drawPatchs();
     glFlush();
 }
 

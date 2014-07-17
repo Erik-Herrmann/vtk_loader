@@ -30,7 +30,9 @@ SOURCES += main.cpp\
     render_widget.cpp \
     ccamera.cpp \
 	cfiledata.cpp \
-    cadrawobject.cpp
+    cadrawobject.cpp \
+    cworldpatch.cpp \
+    cworldpatchcontroller.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -55,7 +57,9 @@ HEADERS  += mainwindow.h \
     cdrawobject.h \
     globaldefines.h \
     cadrawobject.h \
-    cdrawobjectquadspheres.h
+    cdrawobjectquadspheres.h \
+    cworldpatch.h \
+    cworldpatchcontroller.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui
