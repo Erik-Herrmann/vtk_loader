@@ -15,7 +15,8 @@
 
 
 render_widget::render_widget(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer | QGL::Rgba | QGL::AlphaChannel), parent)
+    : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer | QGL::Rgba | QGL::AlphaChannel), parent),
+      patch(0)
 {
     setWindowTitle("Render Widget");
     m_Camera.setPosition(QVector3D(0.0, 0.0, WORLD_SPHERE_RADIUS+10));
@@ -40,6 +41,9 @@ QSize render_widget::sizeHint() const
 }
 
 void render_widget::addToDrawlist(cFileData *data){
+
+    patch->setFileData(data);
+
 #if DRAWMODE_SPHERES
     drawList.push_back(data);
 #endif
@@ -433,4 +437,11 @@ void render_widget::keyPressEvent(QKeyEvent *event){
     }
 
     update();
+}
+
+
+void render_widget::sliderValChanged(int position){
+    if (patch)
+        if (patch->isFileDataSet())
+            patch->updatePatches(double(position));
 }

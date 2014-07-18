@@ -32,6 +32,8 @@ public slots:
     void addToDrawlist(cFileData* data);
     void removeFromDrawlist(cFileData* data);
 
+    void sliderValChanged(int position);
+
 signals:
 
 protected:

@@ -261,25 +261,25 @@ void cDrawObjectQuadSpheres<T>::drawObject(){
     m_vao->bind();
 
     glDisable(GL_CULL_FACE);
-    glEnable(GL_ALPHA_TEST);
+//    glEnable(GL_ALPHA_TEST);
     glEnable(GL_LIGHTING);
     glAlphaFunc(GL_GREATER,0.4);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glDrawArrays(m_Type, 0, 4*m_size);
 
-    glDisable(GL_BLEND);
+//    glDisable(GL_BLEND);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
-    glDisable(GL_ALPHA_TEST);
+//    glDisable(GL_ALPHA_TEST);
     glEnable(GL_CULL_FACE);
 
     m_vao->release();
@@ -291,25 +291,25 @@ void cDrawObjectQuadSpheres<T>::drawIndexObject(std::vector<unsigned int> *indic
     m_vao->bind();
 
     glDisable(GL_CULL_FACE);
-    glEnable(GL_ALPHA_TEST);
+//    glEnable(GL_ALPHA_TEST);
     glEnable(GL_LIGHTING);
     glAlphaFunc(GL_GREATER,0.4);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glDrawElements(m_Type, indices->size(), GL_UNSIGNED_INT, indices->data());
 
-    glDisable(GL_BLEND);
+//    glDisable(GL_BLEND);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
-    glDisable(GL_ALPHA_TEST);
+//    glDisable(GL_ALPHA_TEST);
     glEnable(GL_CULL_FACE);
 
     m_vao->release();

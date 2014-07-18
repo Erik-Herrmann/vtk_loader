@@ -22,6 +22,7 @@ bool not_equal_to(vtkPoint &a, float &b);
 bool not_equal_to(vtkPoint &a, vtkPoint &b);
 
 bool greater(int &a, int &b);
+bool greaterInt(int a, int b);
 bool greater(unsigned int &a, unsigned int &b);
 bool greater(float &a, float &b);
 bool greater(double &a, double &b);

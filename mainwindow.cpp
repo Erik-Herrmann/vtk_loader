@@ -13,11 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setAcceptDrops(true);
     glWid = new render_widget();
+    renderWindow = new RenderWindow(glWid);
     connect(ui->actionLoad_vtk, SIGNAL(triggered()), this, SLOT(loadVTKFile()));
     connect(ui->actionClear_List, SIGNAL(triggered()), this, SLOT(clearList()));
     connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()));
 
-    connect(ui->action_show, SIGNAL(triggered()), glWid, SLOT(show()));
+    connect(ui->action_show, SIGNAL(triggered()), renderWindow, SLOT(show()));
 }
 
 MainWindow::~MainWindow()
@@ -174,7 +175,9 @@ void MainWindow::showCustomContext(QPoint pos){
             loaderList.at(widgetList.indexOf(sendWidget))->createPolyLines();
         }
         else if (selectedAction == addToDrawAction){
-            glWid->addToDrawlist(loaderList.at(widgetList.indexOf(sendWidget))->getFileData());
+            cFileData *fdata = loaderList.at(widgetList.indexOf(sendWidget))->getFileData();
+            glWid->addToDrawlist(fdata);
+            renderWindow->setSliderRange(fdata);
         }
     }
     else

@@ -32,7 +32,8 @@ SOURCES += main.cpp\
 	cfiledata.cpp \
     cadrawobject.cpp \
     cworldpatch.cpp \
-    cworldpatchcontroller.cpp
+    cworldpatchcontroller.cpp \
+    renderwindow.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -59,7 +60,8 @@ HEADERS  += mainwindow.h \
     cadrawobject.h \
     cdrawobjectquadspheres.h \
     cworldpatch.h \
-    cworldpatchcontroller.h
+    cworldpatchcontroller.h \
+    renderwindow.h
 
 FORMS    += mainwindow.ui \
     loaderwidget.ui

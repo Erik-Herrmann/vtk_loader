@@ -1,7 +1,7 @@
 #include "cworldpatch.h"
 #include <GL/glu.h>
 
-#define WORLD_PATCHS_RADIUS WORLD_SPHERE_RADIUS*1.6
+#define WORLD_PATCHS_RADIUS WORLD_SPHERE_RADIUS*1.005
 
 cWorldPatch::cWorldPatch()
     : m_PatchBegin(WorldCoord()),

@@ -7,7 +7,7 @@
 #include <QDropEvent>
 #include "loader_widget.h"
 #include "vtk_loader.h"
-#include "render_widget.h"
+#include "renderwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +33,7 @@ private:
     vtk_loader *myLoader;
     int progessbarPercent;
 
+    RenderWindow *renderWindow;
     render_widget *glWid;
 
     void creatNewLoader(QString filename);

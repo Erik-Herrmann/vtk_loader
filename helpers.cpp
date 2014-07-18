@@ -75,6 +75,10 @@ bool greater(int &a, int &b){
     return a > b;
 }
 
+bool greaterInt(int a, int b){
+    return a > b;
+}
+
 bool greater(unsigned int &a, unsigned int &b){
     return a > b;
 }

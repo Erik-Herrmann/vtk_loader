@@ -23,6 +23,17 @@ enum FileTypes{
     TROPO = 3
 };
 
+namespace Compair {
+    enum CompairFunc{
+        EQUAL = 0,
+        NOT_EQUAL = 1,
+        GREATER = 2,
+        GREATER_EQUAL = 3,
+        LESS = 4,
+        LESS_EQUAL = 5
+    };
+}
+
 struct Point{
     Point(){
         p[0] = p[1] = p[2] = 0.0f;
