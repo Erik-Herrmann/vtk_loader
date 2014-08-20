@@ -7,7 +7,7 @@ cWorldPatch::cWorldPatch()
     : m_PatchBegin(WorldCoord()),
       m_PatchEnd(WorldCoord()),
       m_AlphaValue(0.0f),
-      m_HistoryValue(0.0f)
+      m_AlphaReduction(ALPHA_REDUCTION)
 {
 }
 
@@ -15,7 +15,7 @@ cWorldPatch::cWorldPatch(WorldCoord begin, WorldCoord end)
     : m_PatchBegin(begin),
       m_PatchEnd(end),
       m_AlphaValue(0.0f),
-      m_HistoryValue(0.0f)
+      m_AlphaReduction(ALPHA_REDUCTION)
 {
 }
 
@@ -23,7 +23,7 @@ cWorldPatch::cWorldPatch(WorldCoord begin, WorldCoord end, int stacks, int slice
     : m_PatchBegin(begin),
       m_PatchEnd(end),
       m_AlphaValue(0.0f),
-      m_HistoryValue(0.0f)
+      m_AlphaReduction(ALPHA_REDUCTION)
 {
     createPatch(stacks, slices);
 }
@@ -35,6 +35,10 @@ cWorldPatch::~cWorldPatch()
 
 void cWorldPatch::setAlphaValue(float val){
     m_AlphaValue = val;
+}
+
+void cWorldPatch::setHistory(unsigned int count){
+    m_HistoryCount = count;
 }
 
 void cWorldPatch::createPatch(int stacks, int slices){
@@ -95,9 +99,22 @@ bool cWorldPatch::isInPatch(WorldCoord coord){
     return true;
 }
 
+void cWorldPatch::updateAlpha(unsigned char detection){
+    int f_neu = detection == 4 ? 1 : 0;
+//    m_AlphaValue = (m_AlphaValue * m_AlphaReduction + f_neu)/
+//                    (m_AlphaReduction + 1);
+    if (f_neu){
+        m_AlphaValue = MAX_ALPHA;
+    }
+    else{
+        if (m_AlphaValue > MIN_ALPHA){
+            m_AlphaValue -= (MAX_ALPHA-MIN_ALPHA)/m_HistoryCount;
+        }
+    }
+}
 
 void cWorldPatch::drawPatch(){
-    glColor4f(1.0f, 0.0f, 0.0f, m_AlphaValue);
+    glColor4f(1.0f, 0.3f, 0.3f, m_AlphaValue);
     glBegin(GL_QUADS);
     for (Quad q : m_PatchQuads){
         glVertex3fv(q.a()->data());
@@ -107,16 +124,16 @@ void cWorldPatch::drawPatch(){
     }
     glEnd();
 
-    // the test the Patch size
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-    glLineWidth(1.5);
-    for (Quad q : m_PatchQuads){
-        glBegin(GL_LINE_LOOP);
-        glVertex3fv(q.a()->data());
-        glVertex3fv(q.b()->data());
-        glVertex3fv(q.c()->data());
-        glVertex3fv(q.d()->data());
-        glEnd();
-    }
-    glLineWidth(1);
+//    // the test the Patch size
+//    glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+//    glLineWidth(1.5);
+//    for (Quad q : m_PatchQuads){
+//        glBegin(GL_LINE_LOOP);
+//        glVertex3fv(q.a()->data());
+//        glVertex3fv(q.b()->data());
+//        glVertex3fv(q.c()->data());
+//        glVertex3fv(q.d()->data());
+//        glEnd();
+//    }
+//    glLineWidth(1);
 }

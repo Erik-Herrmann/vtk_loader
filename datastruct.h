@@ -101,6 +101,10 @@ struct WorldCoord {
     float latitude;
 };
 
+struct TimeStep{
+    unsigned int dataIndex;
+};
+
 struct PolyLine{
     vtkPoint point;
     QDateTime time;

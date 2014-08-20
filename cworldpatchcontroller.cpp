@@ -25,7 +25,7 @@ void cWorldPatchController::createPatchs(unsigned int longitudePatches, unsigned
     // reserve memory for pointers
     m_Patches.reserve(longitudePatches*latitudePatches);
 
-    // create cWorldPatchs
+    // calculate step size
     float longiStep = 360.0f/longitudePatches;
     float latiStep = 180.0f/latitudePatches;
 
@@ -33,6 +33,7 @@ void cWorldPatchController::createPatchs(unsigned int longitudePatches, unsigned
     m_LongiStepFac = 1.0f/longiStep;
     m_LatiStepFac = 1.0f/latiStep;
 
+    // create cWorldPatchs
     for (float latiPos=-90.0f; latiPos < 90.0f; latiPos+=latiStep){
         for (float longiPos=-180.0f; longiPos < 180.0f; longiPos+=longiStep){
             WorldCoord begin(longiPos, latiPos);
@@ -47,12 +48,33 @@ cWorldPatch* cWorldPatchController::getPatch(WorldCoord &coord){
     return m_Patches.at(getPatchIndexFromWorldCoord(coord));
 }
 
-unsigned int cWorldPatchController::getNumberOfPatchs(){
+unsigned int cWorldPatchController::getNumberOfPatches(){
     return m_Patches.size();
 }
 
-void cWorldPatchController::setFileData(cFileData *fileData){
+unsigned int cWorldPatchController::setFileData(cFileData *fileData){
+    // number of timeslices (slider steps) for MIPAS
+    unsigned int numTimeSlices = MIPAS_DAYS*MIPAS_ORBITS_PER_DAY*2;
+    // size of one time (slider) step rounded down to int
+    unsigned int sizeTimeSlices = fileData->getDatafieldList().at(0)->numEntries()/numTimeSlices;
+    unsigned int currTime = 0;
+    // add time slice indices to lookup
+    for (unsigned int i=0; i < numTimeSlices; ++i){
+        m_TimeSliderLookup.push_back(currTime);
+        currTime += sizeTimeSlices;
+    }
+    // add all remaining data, cutted by integer casting, as an extra slice
+    m_TimeSliderLookup.push_back(fileData->getDatafieldList().at(0)->numEntries()-1);
     m_FileDataPtr = fileData;
+
+
+    // set HistoryCount for all patches
+    m_HistoryCount = fileData->getDatafieldList().at(0)->numEntries()/(MIPAS_DAYS*MIPAS_ORBITS_PER_DAY);
+    for (cWorldPatch *patch : m_Patches){
+        patch->setHistory(m_HistoryCount);
+    }
+
+    return m_TimeSliderLookup.size()-1;
 }
 
 bool cWorldPatchController::isFileDataSet(){
@@ -68,40 +90,62 @@ unsigned int cWorldPatchController::getPatchIndexFromWorldCoord(WorldCoord &coor
 }
 
 
-void cWorldPatchController::updatePatches(double time){
+void cWorldPatchController::updatePatches(std::vector<unsigned int> *dataindices, unsigned int timeStep){
     if (!m_FileDataPtr)
         return;
-    int index = getDataIndexFromTime(time);
+
+    // get datafield index from lookup
+    int index = m_TimeSliderLookup.at(timeStep);
 
     if (index < 0)
         return;
 
+    // clear old patch color
     clearPatchAlpha();
 
-    cDataFieldT<vtkPoint> * df_p =
+    // get datafield pointer
+    cDataFieldT<vtkPoint> *df_p =
             static_cast<cDataFieldT<vtkPoint>*>(m_FileDataPtr->getDatafield("POINTS"));
     if (!df_p)
         return;
-    cDataFieldT<unsigned char> * df_d =
+    cDataFieldT<unsigned char> *df_d =
             static_cast<cDataFieldT<unsigned char>*>(m_FileDataPtr->getDatafield("detection"));
     if (!df_d)
         return;
 
-    for (int i=index-999; i <= index; ++i){
-        if (df_d->at(i) == 4){
+    // set of patches which get a detection
+    std::set<unsigned int> patchIndices;
+    // clear index vector for datapoints
+    dataindices->clear();
+
+    // get oldest index with history count
+    int startIndex = index-m_HistoryCount < 0 ? 0 : index-m_HistoryCount;
+
+    // from oldest to current index, update patches
+    for (int i=startIndex; i <= index; ++i){
             vtkPoint &p = df_p->at(i);
             WorldCoord coord(p.x, p.y);
             unsigned int patchIdx =
                     getPatchIndexFromWorldCoord(coord);
-            m_Patches.at(patchIdx)->setAlphaValue(1.0f);
-        }
+
+            // reduce alpha for all patches (till now)
+            for (unsigned int idx : patchIndices)
+                if (idx != patchIdx)
+                    m_Patches.at(idx)->updateAlpha(0);
+
+            // update with current detection
+            patchIndices.insert(patchIdx);
+            m_Patches.at(patchIdx)->updateAlpha(df_d->at(i));
+
+            dataindices->push_back(i);
     }
+    patchIndices.clear();
 
 }
 
 int cWorldPatchController::getDataIndexFromTime(double &time){
-    double timeMax = time+100;
-    double timeMin = time-100;
+    double timeMax = time+1000;
+    double timeMin = time-1000;
 
     cDataFieldT<double> * df_t =
             static_cast<cDataFieldT<double>*>(m_FileDataPtr->getDatafield("time"));
@@ -123,7 +167,7 @@ int cWorldPatchController::getDataIndexFromTime(double &time){
     delete filter0;
     delete filter1;
 
-    std::sort(vec->begin(), vec->end(), Helpers::greaterInt);
+    //std::sort(vec->begin(), vec->end(), Helpers::greaterInt);
 
     int ret = vec->back();
     delete vec;

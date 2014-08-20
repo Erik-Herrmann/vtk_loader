@@ -16,9 +16,9 @@ public:
 
     void createPatchs(unsigned int longitudePatches, unsigned int latitudePatches);
     cWorldPatch* getPatch(WorldCoord &coord);
-    unsigned int getNumberOfPatchs();
+    unsigned int getNumberOfPatches();
 
-    void setFileData(cFileData *fileData);
+    unsigned int setFileData(cFileData *fileData);
     bool isFileDataSet();
 
     void drawPatchs();
@@ -29,8 +29,11 @@ private:
     float m_LongiStepFac;
     float m_LatiStepFac;
     std::vector<cWorldPatch*> m_Patches;
+    std::vector<unsigned int> m_TimeSliderLookup;
 
     cFileData *m_FileDataPtr;
+
+    unsigned int m_HistoryCount;
 
     unsigned int getPatchIndexFromWorldCoord(WorldCoord &coord);
     int getDataIndexFromTime(double &time);
@@ -38,7 +41,7 @@ private:
 
 
 public slots:
-    void updatePatches(double time);
+    void updatePatches(std::vector<unsigned int> *dataindices, unsigned int timeStep);
 };
 
 #endif // CWORLDPATCHCONTROLLER_H

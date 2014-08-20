@@ -16,7 +16,7 @@
 
 render_widget::render_widget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SingleBuffer | QGL::DepthBuffer | QGL::StencilBuffer | QGL::Rgba | QGL::AlphaChannel), parent),
-      patch(0)
+      m_WorldPatches(0)
 {
     setWindowTitle("Render Widget");
     m_Camera.setPosition(QVector3D(0.0, 0.0, WORLD_SPHERE_RADIUS+10));
@@ -42,7 +42,8 @@ QSize render_widget::sizeHint() const
 
 void render_widget::addToDrawlist(cFileData *data){
 
-    patch->setFileData(data);
+    unsigned int numTimeSlices = m_WorldPatches->setFileData(data);
+    emit setSliderMinMax(0, numTimeSlices);
 
 #if DRAWMODE_SPHERES
     drawList.push_back(data);
@@ -105,7 +106,7 @@ void render_widget::loadTextures(){
     QPixmap pixMap(QCoreApplication::applicationDirPath() + "/texture/earth_8k.jpg");
     if (pixMap.isNull())
         return;
-    tex = new QImage(QGLWidget::convertToGLFormat(pixMap.toImage()));
+    QImage *tex = new QImage(QGLWidget::convertToGLFormat(pixMap.toImage()));
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glGenTextures(1, &texture);
@@ -133,8 +134,8 @@ void render_widget::initializeGL()
     // load world texture to GPU-Buffer
     loadTextures();
 
-    patch = new cWorldPatchController();
-    patch->createPatchs(36, 18);
+    m_WorldPatches = new cWorldPatchController();
+    m_WorldPatches->createPatchs(36, 18);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
@@ -296,9 +297,9 @@ void render_widget::paintGL()
 #if DRAWMODE_BUFFER
     glLineWidth(3);
     glPointSize(4);
-    foreach (caDrawObject* obj, drawList){
-        obj->drawObject();
-    }
+//    foreach (caDrawObject* obj, drawList){
+//        obj->drawObject();
+//    }
     glPointSize(1);
     glLineWidth(1);
 #endif
@@ -307,11 +308,9 @@ void render_widget::paintGL()
 //    DRAW: with indexed array (+/-)
 //----------------------------------------
 #if DRAWMODE_INDEXED_BUFFER
-    glPointSize(4);
     foreach (caDrawObject *obj, drawList){
         obj->drawIndexObject(&indices);
     }
-    glPointSize(1);
 #endif
 //----------------------------------------
 
@@ -331,7 +330,7 @@ void render_widget::paintGL()
 //--------------------------------------------------------
 
     glDisable(GL_LIGHTING);
-    patch->drawPatchs();
+    m_WorldPatches->drawPatchs();
 
     glFlush();
 }
@@ -422,16 +421,16 @@ void render_widget::keyPressEvent(QKeyEvent *event){
             showFullScreen();
             update();
         }
-#if DRAWMODE_INDEXED_BUFFER
-    case Qt::Key_Plus:
-        for (int i=0; i < 13; i++)
-            indices.push_back(indices.size());
-        break;
-    case Qt::Key_Minus:
-        for (int i=0; i < 13; i++)
-            indices.pop_back();
-        break;
-#endif
+//#if DRAWMODE_INDEXED_BUFFER
+//    case Qt::Key_Plus:
+//        for (int i=0; i < 13; i++)
+//            indices.push_back(indices.size());
+//        break;
+//    case Qt::Key_Minus:
+//        for (int i=0; i < 13; i++)
+//            indices.pop_back();
+//        break;
+//#endif
     default:
         break;
     }
@@ -440,8 +439,15 @@ void render_widget::keyPressEvent(QKeyEvent *event){
 }
 
 
+void render_widget::forwardedKeys(QKeyEvent *event){
+    keyPressEvent(event);
+}
+
+
 void render_widget::sliderValChanged(int position){
-    if (patch)
-        if (patch->isFileDataSet())
-            patch->updatePatches(double(position));
+    if (m_WorldPatches)
+        if (m_WorldPatches->isFileDataSet())
+            m_WorldPatches->updatePatches(&indices, (unsigned int)position);
+
+    update();
 }

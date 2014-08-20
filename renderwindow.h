@@ -18,11 +18,16 @@ private:
     QSlider *m_Slider;
     QVBoxLayout *m_MainLayout;
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+
 signals:
     void newTimeVal(double time);
+    void keyForward(QKeyEvent *event);
 
 public slots:
     void setSliderRange(cFileData *fileData);
+    void setSliderMinMax(int min, int max);
 
 };
 

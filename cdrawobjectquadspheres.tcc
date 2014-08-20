@@ -198,8 +198,10 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
     float *texCoord = new float[12*(m_size-(m_size/3))];
     T *quads = new T[12*m_size];
 
+    // create points and texturecoordinates of the quads
     generateQuads(m_VertexPtr, quads, texCoord);
 
+    // create VertexBuffer
     m_VertexBuffer = new QGLBuffer;
     m_VertexBuffer->create();
     m_VertexBuffer->setUsagePattern(QGLBuffer::StaticDraw);
@@ -207,6 +209,7 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
     m_VertexBuffer->allocate(quads, 12*m_size*sizeof(T));
     glVertexPointer(3, GL_FLOAT, 0, 0);
 
+    // create TexCoordBuffer
     m_TextureCoordBuffer = new QGLBuffer;
     m_TextureCoordBuffer->create();
     m_TextureCoordBuffer->setUsagePattern(QGLBuffer::StaticDraw);
@@ -214,8 +217,10 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
     m_TextureCoordBuffer->allocate(texCoord, 12*(m_size-(m_size/3))*sizeof(unsigned int));
     glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
+    // load texture depending on "detection" used or not
     QImage *tex;
     if (m_DetectionPtr){
+        // texture with 4 colors (MIPAS detection)
         tex = new QImage(QGLWidget::convertToGLFormat(
                            QImage(
                                QCoreApplication::applicationDirPath() +
@@ -224,6 +229,7 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
                          );
     }
     else{
+        // texture with single color
         tex = new QImage(QGLWidget::convertToGLFormat(
                            QImage(
                                QCoreApplication::applicationDirPath() +
@@ -234,6 +240,8 @@ void cDrawObjectQuadSpheres<T>::createVBO(){
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+
+    // bind texture and set some parameters
     glGenTextures(1, &m_texture);
     glBindTexture(GL_TEXTURE_2D, m_texture);
 
@@ -290,26 +298,32 @@ template<typename T>
 void cDrawObjectQuadSpheres<T>::drawIndexObject(std::vector<unsigned int> *indices){
     m_vao->bind();
 
+    // convert data indices to QuadSphere indices
+    std::vector<unsigned int> drawIndices;
+    drawIndices.reserve(12*indices->size());
+    for (unsigned int idx : *indices){
+        unsigned int idx12 = 12*idx;
+        for (int i=0; i < 12; ++i){
+            drawIndices.push_back(idx12+i);
+        }
+    }
+
     glDisable(GL_CULL_FACE);
-//    glEnable(GL_ALPHA_TEST);
     glEnable(GL_LIGHTING);
     glAlphaFunc(GL_GREATER,0.4);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    glDrawElements(m_Type, indices->size(), GL_UNSIGNED_INT, indices->data());
+    glDrawElements(m_Type, drawIndices.size(), GL_UNSIGNED_INT, drawIndices.data());
 
-//    glDisable(GL_BLEND);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisable(GL_TEXTURE_2D);
+    glAlphaFunc(GL_GREATER, 0.0);
     glDisable(GL_LIGHTING);
-//    glDisable(GL_ALPHA_TEST);
     glEnable(GL_CULL_FACE);
 
     m_vao->release();

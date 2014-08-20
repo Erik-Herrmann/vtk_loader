@@ -177,7 +177,7 @@ void MainWindow::showCustomContext(QPoint pos){
         else if (selectedAction == addToDrawAction){
             cFileData *fdata = loaderList.at(widgetList.indexOf(sendWidget))->getFileData();
             glWid->addToDrawlist(fdata);
-            renderWindow->setSliderRange(fdata);
+            //renderWindow->setSliderRange(fdata);
         }
     }
     else

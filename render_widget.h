@@ -11,8 +11,8 @@
 #include "cdrawobjectquadspheres.h"
 #include "cworldpatchcontroller.h"
 
-#define DRAWMODE_BUFFER 1
-#define DRAWMODE_INDEXED_BUFFER 0
+#define DRAWMODE_BUFFER 0
+#define DRAWMODE_INDEXED_BUFFER 1
 #define DRAWMODE_SPHERES 0
 #define DRAWMODE_SPHERES_DISPLAYLIST 0
 
@@ -33,8 +33,10 @@ public slots:
     void removeFromDrawlist(cFileData* data);
 
     void sliderValChanged(int position);
+    void forwardedKeys(QKeyEvent *event);
 
 signals:
+    void setSliderMinMax(int min, int max);
 
 protected:
     void initializeGL();
@@ -67,9 +69,8 @@ private:
 //-----------------------
 #endif
     cCamera m_Camera;
-    QImage *tex;
 
-    cWorldPatchController* patch;
+    cWorldPatchController* m_WorldPatches;
 
 
     void loadTextures();
