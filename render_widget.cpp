@@ -135,7 +135,7 @@ void render_widget::initializeGL()
     loadTextures();
 
     m_WorldPatches = new cWorldPatchController();
-    m_WorldPatches->createPatchs(36, 18);
+    m_WorldPatches->createPatchs(PATCHES_LONGITUDE, PATCHES_LATITUDE);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

@@ -26,7 +26,7 @@ private:
     WorldCoord m_PatchEnd;
 
     float m_AlphaValue;
-    float m_AlphaReduction;
+    //float m_AlphaReduction;
 
     unsigned int m_HistoryCount;
 

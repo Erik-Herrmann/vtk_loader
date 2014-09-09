@@ -6,24 +6,24 @@
 cWorldPatch::cWorldPatch()
     : m_PatchBegin(WorldCoord()),
       m_PatchEnd(WorldCoord()),
-      m_AlphaValue(0.0f),
-      m_AlphaReduction(ALPHA_REDUCTION)
+      m_AlphaValue(0.0f)
+      //m_AlphaReduction(ALPHA_REDUCTION)
 {
 }
 
 cWorldPatch::cWorldPatch(WorldCoord begin, WorldCoord end)
     : m_PatchBegin(begin),
       m_PatchEnd(end),
-      m_AlphaValue(0.0f),
-      m_AlphaReduction(ALPHA_REDUCTION)
+      m_AlphaValue(0.0f)
+      //m_AlphaReduction(ALPHA_REDUCTION)
 {
 }
 
 cWorldPatch::cWorldPatch(WorldCoord begin, WorldCoord end, int stacks, int slices)
     : m_PatchBegin(begin),
       m_PatchEnd(end),
-      m_AlphaValue(0.0f),
-      m_AlphaReduction(ALPHA_REDUCTION)
+      m_AlphaValue(0.0f)
+      //m_AlphaReduction(ALPHA_REDUCTION)
 {
     createPatch(stacks, slices);
 }
@@ -107,9 +107,10 @@ void cWorldPatch::updateAlpha(unsigned char detection){
         m_AlphaValue = MAX_ALPHA;
     }
     else{
-        if (m_AlphaValue > MIN_ALPHA){
-            m_AlphaValue -= (MAX_ALPHA-MIN_ALPHA)/m_HistoryCount;
-        }
+//        if (m_AlphaValue > MIN_ALPHA){
+//            m_AlphaValue -= (MAX_ALPHA-MIN_ALPHA)/m_HistoryCount;
+//        }
+        m_AlphaValue *= 0.9995;
     }
 }
 

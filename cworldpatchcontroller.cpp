@@ -70,6 +70,7 @@ unsigned int cWorldPatchController::setFileData(cFileData *fileData){
 
     // set HistoryCount for all patches
     m_HistoryCount = fileData->getDatafieldList().at(0)->numEntries()/(MIPAS_DAYS*MIPAS_ORBITS_PER_DAY);
+    m_HistoryCount *= HISTORY_COUNT_FACTOR;
     for (cWorldPatch *patch : m_Patches){
         patch->setHistory(m_HistoryCount);
     }
@@ -101,7 +102,7 @@ void cWorldPatchController::updatePatches(std::vector<unsigned int> *dataindices
         return;
 
     // clear old patch color
-    clearPatchAlpha();
+    //clearPatchAlpha();
 
     // get datafield pointer
     cDataFieldT<vtkPoint> *df_p =
@@ -119,7 +120,7 @@ void cWorldPatchController::updatePatches(std::vector<unsigned int> *dataindices
     dataindices->clear();
 
     // get oldest index with history count
-    int startIndex = index-m_HistoryCount < 0 ? 0 : index-m_HistoryCount;
+    int startIndex = index-(int)m_HistoryCount < 0 ? 0 : index-m_HistoryCount;
 
     // from oldest to current index, update patches
     for (int i=startIndex; i <= index; ++i){

@@ -20,13 +20,17 @@
 #define WORLD_SPHERE_RADIUS 10
 #define EARTH_RADIUS 6371.000
 
-#define ALPHA_REDUCTION 0.8f
-#define ALPHA_HISTORY_COUNT 1000
-#define MAX_ALPHA 0.8f
-#define MIN_ALPHA 0.2f
+//#define ALPHA_REDUCTION 0.8f
+//#define ALPHA_HISTORY_COUNT 1000
+#define HISTORY_COUNT_FACTOR 1                  // Factor for HistoryCount (Default: 1 Orbit)
+#define MAX_ALPHA 0.8f                          // Patches max. Alpha
+#define MIN_ALPHA 0.2f                          // Patches min. Alpha
 
-#define MIPAS_ORBITS_PER_DAY 14.5f
-#define MIPAS_DAYS 92
+#define MIPAS_ORBITS_PER_DAY 14.5f              // Number of Orbits per Day (given from MIPAS)
+#define MIPAS_DAYS 92                           // Number of recorded Days
+
+#define PATCHES_LONGITUDE 36                    // Number of Patches in Longitude
+#define PATCHES_LATITUDE 18                     // Number of Patches in Latitude
 
 
 // Island
